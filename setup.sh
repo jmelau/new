@@ -101,14 +101,6 @@ PY=".venv/bin/python"
 "$PY" -m pip install --quiet -r requirements.txt
 ok "installed into .venv"
 
-# ─────────────────────────────────────────────────────── garmin login ──
-step "Connecting to Garmin Connect"
-info "Your password is used once, here on your Mac, and is never stored or uploaded."
-SECRETS_DIR=$(mktemp -d)
-"$PY" scripts/login_local.py --secrets-to "$SECRETS_DIR"
-[ -s "$SECRETS_DIR/garmin_tokens.txt" ] || die "Garmin login did not complete."
-ok "logged in, session token minted"
-
 # ─────────────────────────────────────────────────────── the repo ──
 step "Setting up the GitHub repository"
 
@@ -118,19 +110,83 @@ fi
 git add -A
 git diff --staged --quiet || git commit -q -m "BJJ dashboard"
 
+push_to() {  # $1 = owner/name
+  git remote get-url origin >/dev/null 2>&1 \
+    && git remote set-url origin "https://github.com/$1.git" \
+    || git remote add origin "https://github.com/$1.git"
+  if git push -q -u origin main 2>/dev/null; then return 0; fi
+  warn "That repository already holds different content."
+  printf "  Replace its contents with the dashboard? This erases what's there. [y/N] "
+  read -r overwrite
+  case "$overwrite" in
+    [Yy]*) git push -q -u --force origin main ;;
+    *) die "Nothing pushed. Re-run and choose a different repository name." ;;
+  esac
+}
+
 if git remote get-url origin >/dev/null 2>&1; then
   REPO=$("$GH" repo view --json nameWithOwner --jq .nameWithOwner)
+  push_to "$REPO"
   ok "using existing repo $REPO"
-  git push -q -u origin main 2>/dev/null || true
 else
-  DEFAULT_NAME="bjj-dashboard"
-  printf "  Repository name [%s]: " "$DEFAULT_NAME"
-  read -r REPO_NAME
-  REPO_NAME=${REPO_NAME:-$DEFAULT_NAME}
-  info "Creating a public repo — public is what makes GitHub Pages free."
-  "$GH" repo create "$REPO_NAME" --public --source=. --remote=origin --push
-  REPO="$GH_USER/$REPO_NAME"
-  ok "created $REPO"
+  REPO_NAME="bjj-dashboard"
+  while :; do
+    printf "  Repository name [%s]: " "$REPO_NAME"
+    read -r answer
+    [ -n "$answer" ] && REPO_NAME="$answer"
+    REPO="$GH_USER/$REPO_NAME"
+
+    if ! "$GH" repo view "$REPO" >/dev/null 2>&1; then
+      info "Creating a public repo — public is what makes GitHub Pages free."
+      "$GH" repo create "$REPO_NAME" --public --source=. --remote=origin --push
+      ok "created $REPO"
+      break
+    fi
+
+    # The name is taken. An empty repo is almost certainly one the user made for
+    # exactly this, so adopt it silently; anything with content gets a question.
+    BRANCH=$("$GH" repo view "$REPO" --json defaultBranchRef --jq '.defaultBranchRef.name // ""' 2>/dev/null || echo "")
+    if [ -n "$BRANCH" ]; then
+      warn "You already have a repository called '$REPO_NAME', and it isn't empty."
+      printf "  [u]se it anyway, or pick another [n]ame? [u/n] "
+      read -r choice
+      case "$choice" in [Nn]*) REPO_NAME="${REPO_NAME}-2"; continue ;; esac
+    else
+      info "Found your empty '$REPO_NAME' repository — using that."
+    fi
+
+    VISIBILITY=$("$GH" repo view "$REPO" --json visibility --jq .visibility 2>/dev/null || echo "")
+    if [ "$VISIBILITY" = "PRIVATE" ]; then
+      warn "It's private, and GitHub Pages needs a paid plan for private repos."
+      printf "  Make it public? [Y/n] "
+      read -r makepublic
+      case "$makepublic" in
+        [Nn]*) warn "Leaving it private — the dashboard won't publish to Pages." ;;
+        *) "$GH" repo edit "$REPO" --visibility public \
+             --accept-visibility-change-consequences >/dev/null && ok "now public" ;;
+      esac
+    fi
+
+    push_to "$REPO"
+    ok "using $REPO"
+    break
+  done
+fi
+
+# ─────────────────────────────────────────────────────── garmin login ──
+step "Connecting to Garmin Connect"
+info "Your password is used once, here on your Mac, and is never stored or uploaded."
+SECRETS_DIR=$(mktemp -d)
+"$PY" scripts/login_local.py --secrets-to "$SECRETS_DIR"
+[ -s "$SECRETS_DIR/garmin_tokens.txt" ] || die "Garmin login did not complete."
+ok "logged in, session token minted"
+
+# The login may have corrected bjj_type_keys in config.json — ship that too.
+if ! git diff --quiet -- config.json; then
+  git add config.json
+  git commit -q -m "Set BJJ activity type"
+  git push -q origin main
+  info "pushed the activity-type correction"
 fi
 
 # ─────────────────────────────────────────────────────── secrets ──
