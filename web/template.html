@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Mat time — BJJ training</title>
+<style>
+/* ── tokens ─────────────────────────────────────────────────────────── */
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0d0d0d; --surface:#1a1a19; --raised:#212120;
+  --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  --de-emph:#5a5a56;
+  --track:#0d366b;
+  --z1:#b7d3f6; --z2:#6da7ec; --z3:#3987e5; --z4:#256abf; --z5:#184f95;
+  --h0:#272726; --h1:#184f95; --h2:#256abf; --h3:#3987e5; --h4:#6da7ec; --h5:#9ec5f4;
+  --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
+}
+:root[data-theme="light"]{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb; --raised:#ffffff;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --de-emph:#b8b6ae;
+  --track:#cde2fb;
+  --z1:#86b6ef; --z2:#5598e7; --z3:#2a78d6; --z4:#1c5cab; --z5:#0d366b;
+  --h0:#eeede8; --h1:#cde2fb; --h2:#9ec5f4; --h3:#5598e7; --h4:#2a78d6; --h5:#184f95;
+  --good:#006300; --warn:#fab219; --crit:#d03b3b;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--page); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px 96px}
+
+/* ── header ─────────────────────────────────────────────────────────── */
+header.top{
+  display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;
+  padding:44px 0 26px;border-bottom:1px solid var(--border);margin-bottom:44px;
+}
+header.top h1{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:0}
+header.top .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button.ghost{
+  font:inherit;font-size:12.5px;color:var(--ink-2);background:transparent;
+  border:1px solid var(--border);border-radius:999px;padding:6px 14px;cursor:pointer;
+}
+button.ghost:hover{border-color:var(--muted);color:var(--ink)}
+button.ghost[aria-pressed="true"]{background:var(--raised);color:var(--ink);border-color:var(--muted)}
+.stamp{color:var(--muted);font-size:12px;margin-left:6px}
+
+/* ── layout ─────────────────────────────────────────────────────────── */
+section{margin:0 0 52px}
+h2.band{
+  font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 18px;
+}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+@media (max-width:860px){.grid-2,.grid-4{grid-template-columns:1fr}}
+@media (max-width:640px){.wrap{padding:0 16px 72px}}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:22px 24px 20px;
+}
+.card h3{font-size:14px;font-weight:600;margin:0 0 2px}
+.card .note{font-size:12.5px;color:var(--muted);margin:0 0 18px}
+
+/* ── hero ───────────────────────────────────────────────────────────── */
+.hero{display:flex;flex-wrap:wrap;align-items:flex-end;gap:44px;margin-bottom:26px}
+.hero .label{
+  font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+  margin:0 0 6px;font-weight:600;
+}
+.hero .value{
+  font-size:78px;line-height:.94;font-weight:600;letter-spacing:-.03em;margin:0;
+}
+.hero .value .unit{font-size:30px;font-weight:500;color:var(--ink-2);margin-left:4px;letter-spacing:0}
+.hero .since{margin:10px 0 0;color:var(--ink-2);font-size:13.5px}
+
+.tile .label{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+.tile .value{font-size:31px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.1}
+.tile .value .unit{font-size:15px;font-weight:500;color:var(--ink-2);margin-left:2px}
+.tile .foot{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+
+/* ── meters ─────────────────────────────────────────────────────────── */
+.meter-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:12px}
+.meter-big{font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.meter-big .unit{font-size:16px;font-weight:500;color:var(--ink-2);margin-left:2px}
+.meter-goal{font-size:12.5px;color:var(--muted);text-align:right}
+.track{height:10px;border-radius:999px;background:var(--track);overflow:hidden;position:relative}
+.fill{height:100%;border-radius:999px;background:var(--s1)}
+.pace{position:absolute;top:-4px;width:2px;height:18px;background:var(--ink-2);border-radius:1px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;margin-top:14px;
+  color:var(--ink-2);
+}
+.badge .dot{width:9px;height:9px;border-radius:50%}
+.badge svg{flex:none}
+
+/* ── charts ─────────────────────────────────────────────────────────── */
+.plot{width:100%;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 14px;font-size:12.5px;color:var(--ink-2)}
+.legend .item{display:inline-flex;align-items:center;gap:7px}
+.legend .key{width:11px;height:11px;border-radius:3px;flex:none}
+.legend .key.line{height:3px;border-radius:2px;width:14px}
+.scale{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:14px;flex-wrap:wrap}
+.hscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.scale .sw{width:13px;height:13px;border-radius:3px}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+
+#tip{
+  position:fixed;pointer-events:none;opacity:0;transition:opacity .09s;
+  background:var(--raised);color:var(--ink);border:1px solid var(--border);
+  border-radius:9px;padding:9px 12px;font-size:12.5px;line-height:1.45;
+  box-shadow:0 8px 26px rgba(0,0,0,.35);z-index:60;max-width:230px;
+}
+#tip .t{font-weight:600;margin-bottom:3px}
+#tip .r{color:var(--ink-2);display:flex;gap:10px;justify-content:space-between}
+#tip .r b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* ── tables ─────────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{
+  text-align:right;font-weight:600;color:var(--muted);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;padding:0 0 9px;border-bottom:1px solid var(--border);
+}
+th:first-child,td:first-child{text-align:left}
+td{padding:8px 0;border-bottom:1px solid var(--border);color:var(--ink-2);text-align:right}
+td:first-child{color:var(--ink)}
+tbody tr:last-child td{border-bottom:none}
+.tablewrap{max-height:340px;overflow:auto;margin-top:18px}
+.data-table{display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:16px}
+body.show-tables .data-table{display:block}
+.data-table h4{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase}
+
+.filterbar{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  padding:0 0 22px;margin:0 0 4px;
+}
+.filterbar .lbl{font-size:12.5px;color:var(--muted);margin-right:2px}
+.empty{color:var(--muted);font-size:13px;padding:22px 0}
+.alert{
+  background:var(--raised);border:1px solid var(--crit);border-radius:12px;
+  padding:14px 18px;margin:0 0 30px;font-size:13.5px;color:var(--ink-2);
+}
+.alert b{color:var(--ink)}
+footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1 id="title">Mat time</h1>
+      <p class="sub" id="subtitle"></p>
+    </div>
+    <div class="controls">
+      <button class="ghost" id="tables-btn" aria-pressed="false">Data tables</button>
+      <button class="ghost" id="theme-btn">Light</button>
+      <span class="stamp" id="stamp"></span>
+    </div>
+  </header>
+
+  <div id="alert-slot"></div>
+
+  <!-- ── lifetime ─────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">All time</h2>
+    <div class="hero">
+      <div>
+        <p class="label">Lifetime mat time</p>
+        <p class="value" id="hero-value">—</p>
+        <p class="since" id="hero-since"></p>
+      </div>
+    </div>
+    <div class="grid-4" id="lifetime-tiles"></div>
+  </section>
+
+  <!-- ── right now ────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">Right now</h2>
+    <div class="grid-2">
+      <div class="card" id="week-card"></div>
+      <div class="card" id="month-card"></div>
+    </div>
+    <div class="grid-4" style="margin-top:20px" id="now-tiles"></div>
+  </section>
+
+  <!-- ── consistency ──────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">Consistency</h2>
+    <div class="card" style="margin-bottom:20px">
+      <h3>Every training day, last 12 months</h3>
+      <p class="note" id="heat-note"></p>
+      <div id="heatmap"></div>
+      <div class="data-table" id="heat-table"></div>
+    </div>
+
+    <div class="filterbar">
+      <span class="lbl">Range for the charts below</span>
+      <button class="ghost range" data-months="3">3 months</button>
+      <button class="ghost range" data-months="6">6 months</button>
+      <button class="ghost range" data-months="12" aria-pressed="true">12 months</button>
+      <button class="ghost range" data-months="0">All time</button>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>Sessions per week</h3>
+        <p class="note">The line is your target of <span id="wk-target"></span>. The faded bar is the week you are in.</p>
+        <div id="weeks-chart"></div>
+        <div class="data-table" id="weeks-table"></div>
+      </div>
+      <div class="card">
+        <h3>Mat hours per month</h3>
+        <p class="note">The line is your <span id="mo-target"></span> monthly target. The faded bar is the month you are in.</p>
+        <div id="months-chart"></div>
+        <div class="data-table" id="months-table"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── intensity ────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">Intensity</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Where the time is spent</h3>
+        <p class="note" id="zone-note">Share of session time in each heart-rate zone.</p>
+        <div id="zones-chart"></div>
+        <div class="data-table" id="zones-table"></div>
+      </div>
+      <div class="card">
+        <h3>Average heart rate per session</h3>
+        <p class="note">Each dot is one session. The line is an 8-session rolling average.</p>
+        <div id="hr-chart"></div>
+        <div class="data-table" id="hr-table"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── long game ────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">The long game</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Recent load vs your baseline</h3>
+        <p class="note">Mat hours in the last 7 days, against your 4-week average week.</p>
+        <div id="load-chart"></div>
+        <div class="data-table" id="load-table"></div>
+      </div>
+      <div class="card">
+        <h3>VO<sub>2</sub> max</h3>
+        <p class="note" id="vo2-note">Weekly samples from your watch.</p>
+        <div id="vo2-chart"></div>
+        <div class="data-table" id="vo2-table"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:20px">
+      <h3>How the training year splits</h3>
+      <p class="note">Hours by sport, last 12 months.</p>
+      <div id="mix-chart"></div>
+      <div class="data-table" id="mix-table"></div>
+    </div>
+  </section>
+
+  <!-- ── sessions ─────────────────────────────────────────────────── -->
+  <section>
+    <h2 class="band">Sessions</h2>
+    <div class="card">
+      <h3>Most recent first</h3>
+      <p class="note" id="sessions-note"></p>
+      <div class="tablewrap" id="sessions-table"></div>
+    </div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = /*__DASHBOARD_DATA__*/null;
+
+/* ══ small helpers ══════════════════════════════════════════════════ */
+const $ = (s, r=document) => r.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const fmtH = h => h >= 100 ? Math.round(h).toLocaleString() : (Math.round(h*10)/10).toLocaleString();
+const fmtHM = mins => {
+  const h = Math.floor(mins/60), m = Math.round(mins%60);
+  return h ? `${h}h ${String(m).padStart(2,"0")}m` : `${m}m`;
+};
+const parseD = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const shortDate = s => { const d = parseD(s); return `${d.getDate()} ${MONTHS[d.getMonth()]}`; };
+const longDate = s => { const d = parseD(s); return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
+const monthLabel = k => `${MONTHS[+k.slice(5,7)-1]} ${k.slice(2,4)}`;
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function el(tag, attrs = {}, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) if (attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function svgIn(host, w, h) {
+  host.innerHTML = "";
+  const s = el("svg", {class:"plot", width:w, height:h, viewBox:`0 0 ${w} ${h}`, role:"img"}, host);
+  return s;
+}
+/* Rounded only on the data end, square at the baseline. */
+function barPath(x, y, w, h, r) {
+  r = Math.max(0, Math.min(r, w/2, h));
+  return `M${x},${y+h} L${x},${y+r} Q${x},${y} ${x+r},${y} L${x+w-r},${y} Q${x+w},${y} ${x+w},${y+r} L${x+w},${y+h} Z`;
+}
+/* Ticks inside an arbitrary [lo,hi] window — a line chart rarely starts at zero. */
+function axisTicks(lo, hi, count = 4) {
+  const span = hi - lo;
+  if (span <= 0) return [lo];
+  const mag = Math.pow(10, Math.floor(Math.log10(span/count)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m*mag).find(s => span/s <= count + 0.5) || 10*mag;
+  const out = [];
+  for (let v = Math.ceil(lo/step)*step; v <= hi + step*0.001; v += step) {
+    out.push(Math.round(v*1000)/1000);
+  }
+  return out;
+}
+function niceTicks(max, count = 4) {
+  if (max <= 0) return [0, 1];
+  const raw = max / count;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m*mag).find(s => s >= raw) || 10*mag;
+  const out = [];
+  for (let v = 0; v <= max + step*0.001; v += step) out.push(Math.round(v*1000)/1000);
+  return out;
+}
+
+/* ══ tooltip ════════════════════════════════════════════════════════ */
+const tip = $("#tip");
+function showTip(evt, title, rows) {
+  tip.innerHTML = `<div class="t">${title}</div>` +
+    rows.map(([k, v]) => `<div class="r"><span>${k}</span><b>${v}</b></div>`).join("");
+  tip.style.opacity = 1;
+  moveTip(evt);
+}
+function moveTip(evt) {
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = evt.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = evt.clientY - r.height - pad;
+  tip.style.left = Math.max(8, x) + "px";
+  tip.style.top = Math.max(8, y) + "px";
+}
+function hideTip() { tip.style.opacity = 0; }
+function hoverable(node, title, rows) {
+  node.style.cursor = "default";
+  node.addEventListener("pointerenter", e => showTip(e, title, rows));
+  node.addEventListener("pointermove", moveTip);
+  node.addEventListener("pointerleave", hideTip);
+}
+
+/* ══ table twins ════════════════════════════════════════════════════ */
+function table(host, caption, cols, rows) {
+  if (!host) return;
+  host.innerHTML = `<h4>${caption}</h4><div class="tablewrap"><table>
+    <thead><tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody>
+  </table></div>`;
+}
+
+/* ══ charts ═════════════════════════════════════════════════════════ */
+
+/* Columns with an optional target rule. One series → no legend box. */
+/* Draw x labels left to right, skipping any that would touch the previous one. */
+function xLabels(svg, items, H, minGap = 12) {
+  let lastRight = -Infinity;
+  const drawn = [];
+  items.forEach(it => {
+    const est = it.text.length * 5.9;
+    const left = it.x - est/2;
+    if (left < lastRight + minGap) return;
+    drawn.push(it);
+    lastRight = it.x + est/2;
+  });
+  drawn.forEach(it => {
+    el("text", {x:it.x, y:H-10, "text-anchor":"middle", "font-size":11,
+      fill:css("--muted")}, svg).textContent = it.text;
+  });
+}
+
+function columnChart(host, rows, opt) {
+  const W = host.clientWidth || 520;
+  const PAD = {t:20, r:14, b:30, l:38};
+  const H = 210;
+  const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
+  const svg = svgIn(host, W, H);
+  if (!rows.length) { host.innerHTML = '<p class="empty">No sessions in this range yet.</p>'; return; }
+
+  const max = Math.max(opt.target || 0, ...rows.map(r => r.v)) * 1.12 || 1;
+  const ticks = niceTicks(max);
+  const top = ticks[ticks.length-1];
+  const y = v => PAD.t + plotH - (v/top)*plotH;
+
+  ticks.forEach(t => {
+    el("line", {x1:PAD.l, x2:W-PAD.r, y1:y(t), y2:y(t), stroke:css("--grid"), "stroke-width":1}, svg);
+    el("text", {x:PAD.l-9, y:y(t)+4, "text-anchor":"end", "font-size":11, fill:css("--muted"),
+      style:"font-variant-numeric:tabular-nums"}, svg).textContent = opt.tick ? opt.tick(t) : t;
+  });
+
+  const band = plotW / rows.length;
+  const bw = Math.min(24, Math.max(3, band - Math.max(2, band*0.28)));
+  rows.forEach((r, i) => {
+    const x = PAD.l + band*i + (band - bw)/2;
+    const h = Math.max(r.v > 0 ? 2 : 0, (r.v/top)*plotH);
+    if (h > 0) {
+      const p = el("path", {d:barPath(x, y(r.v), bw, h, 4), fill:opt.color || css("--s1"),
+        opacity: r.partial ? 0.42 : null}, svg);
+      hoverable(p, r.title, r.rows);
+    }
+    // A generous invisible hit target so short bars and gaps still respond.
+    const hit = el("rect", {x:PAD.l+band*i, y:PAD.t, width:band, height:plotH, fill:"transparent"}, svg);
+    hoverable(hit, r.title, r.rows);
+  });
+
+  if (opt.target) {
+    el("line", {x1:PAD.l, x2:W-PAD.r, y1:y(opt.target), y2:y(opt.target),
+      stroke:css("--ink-2"), "stroke-width":1.5}, svg);
+    const t = el("text", {x:W-PAD.r, y:y(opt.target)-7, "text-anchor":"end", "font-size":11,
+      fill:css("--ink-2")}, svg);
+    t.textContent = opt.targetLabel;
+  }
+
+  const every = Math.max(1, Math.ceil(rows.length / Math.max(3, Math.floor(plotW/68))));
+  xLabels(svg, rows
+    .map((r, i) => ({x: PAD.l + band*i + band/2, text: r.label, i}))
+    .filter(o => o.i % every === 0), H);
+  el("line", {x1:PAD.l, x2:W-PAD.r, y1:PAD.t+plotH, y2:PAD.t+plotH, stroke:css("--axis"), "stroke-width":1}, svg);
+}
+
+/* Multi-line chart with crosshair. series: [{key,label,color,dash,width}] */
+function lineChart(host, points, series, opt = {}) {
+  const W = host.clientWidth || 520;
+  const PAD = {t:16, r:opt.endLabel ? 68 : 16, b:30, l:40};
+  const H = opt.height || 210;
+  const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
+  const svg = svgIn(host, W, H);
+  if (points.length < 2) { host.innerHTML = '<p class="empty">Not enough data yet.</p>'; return; }
+
+  // The scatter layer shares the scale, so it has to be in the domain too.
+  const domainKeys = series.map(s => s.key).concat(opt.dots ? [opt.dots] : []);
+  const vals = points.flatMap(p => domainKeys.map(k => p[k]).filter(v => v !== null && v !== undefined));
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (opt.zeroBased) lo = 0;
+  const span = (hi - lo) || 1;
+  lo -= span*0.10; hi += span*0.10;
+  if (opt.zeroBased) lo = 0;
+
+  const x = i => PAD.l + (points.length === 1 ? plotW/2 : (i/(points.length-1))*plotW);
+  const y = v => PAD.t + plotH - ((v-lo)/(hi-lo))*plotH;
+
+  axisTicks(lo, hi, 4).forEach(t => {
+    el("line", {x1:PAD.l, x2:W-PAD.r, y1:y(t), y2:y(t), stroke:css("--grid"), "stroke-width":1}, svg);
+    el("text", {x:PAD.l-9, y:y(t)+4, "text-anchor":"end", "font-size":11, fill:css("--muted"),
+      style:"font-variant-numeric:tabular-nums"}, svg).textContent = opt.tick ? opt.tick(t) : t;
+  });
+  el("line", {x1:PAD.l, x2:W-PAD.r, y1:PAD.t+plotH, y2:PAD.t+plotH, stroke:css("--axis"), "stroke-width":1}, svg);
+
+  if (opt.dots) {
+    points.forEach((p, i) => {
+      if (p[opt.dots] === null || p[opt.dots] === undefined) return;
+      el("circle", {cx:x(i), cy:y(p[opt.dots]), r:3.2, fill:css("--de-emph"), opacity:.85}, svg);
+    });
+  }
+
+  series.forEach(s => {
+    let d = "", open = false;
+    points.forEach((p, i) => {
+      const v = p[s.key];
+      if (v === null || v === undefined) { open = false; return; }
+      d += (open ? "L" : "M") + x(i) + "," + y(v);
+      open = true;
+    });
+    el("path", {d, fill:"none", stroke:s.color, "stroke-width":s.width || 2,
+      "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+    const last = [...points].reverse().find(p => p[s.key] !== null && p[s.key] !== undefined);
+    if (last && s.marker !== false) {
+      const li = points.lastIndexOf(last);
+      el("circle", {cx:x(li), cy:y(last[s.key]), r:4.5, fill:s.color,
+        stroke:css("--surface"), "stroke-width":2}, svg);
+      if (opt.endLabel) {
+        el("text", {x:x(li)+10, y:y(last[s.key])+4, "font-size":11.5, fill:css("--ink-2")}, svg)
+          .textContent = opt.endLabel(last[s.key]);
+      }
+    }
+  });
+
+  const cross = el("line", {y1:PAD.t, y2:PAD.t+plotH, stroke:css("--axis"), "stroke-width":1, opacity:0}, svg);
+  const grab = el("rect", {x:PAD.l, y:PAD.t, width:plotW, height:plotH, fill:"transparent"}, svg);
+  grab.addEventListener("pointermove", e => {
+    const box = svg.getBoundingClientRect();
+    const rel = (e.clientX - box.left - PAD.l) / plotW;
+    const i = Math.max(0, Math.min(points.length-1, Math.round(rel*(points.length-1))));
+    cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("opacity", 1);
+    showTip(e, opt.tipTitle(points[i]), opt.tipRows(points[i]));
+  });
+  grab.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTip(); });
+
+  const every = Math.max(1, Math.ceil(points.length / Math.max(2, Math.floor(plotW/82))));
+  xLabels(svg, points
+    .map((p, i) => ({x: x(i), text: opt.xLabel(p), i}))
+    .filter(o => o.i % every === 0), H);
+}
+
+/* Stacked columns, ordinal ramp, 2px surface gap between segments. */
+function stackedColumns(host, rows, keys) {
+  const W = host.clientWidth || 520;
+  const PAD = {t:14, r:14, b:30, l:38};
+  const H = 210;
+  const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
+  const svg = svgIn(host, W, H);
+  if (!rows.length) { host.innerHTML = '<p class="empty">Heart-rate zones are still syncing.</p>'; return; }
+
+  [0,25,50,75,100].forEach(t => {
+    const yy = PAD.t + plotH - (t/100)*plotH;
+    el("line", {x1:PAD.l, x2:W-PAD.r, y1:yy, y2:yy, stroke:css("--grid"), "stroke-width":1}, svg);
+    el("text", {x:PAD.l-9, y:yy+4, "text-anchor":"end", "font-size":11, fill:css("--muted"),
+      style:"font-variant-numeric:tabular-nums"}, svg).textContent = t + "%";
+  });
+
+  const band = plotW / rows.length;
+  const bw = Math.min(24, Math.max(4, band - Math.max(2, band*0.3)));
+  rows.forEach((r, i) => {
+    const x = PAD.l + band*i + (band - bw)/2;
+    let acc = 0;
+    keys.forEach((k, zi) => {
+      const pct = r.share[zi];
+      if (pct <= 0) return;
+      const h = (pct/100)*plotH;
+      const yTop = PAD.t + plotH - ((acc+pct)/100)*plotH;
+      const gap = zi === keys.length-1 ? 0 : 2;      // surface gap, not a stroke
+      const isTop = zi === keys.length-1 || r.share.slice(zi+1).every(v => v <= 0);
+      const hh = Math.max(1, h - gap);
+      el("path", {d: isTop ? barPath(x, yTop, bw, hh, 4) : `M${x},${yTop}h${bw}v${hh}h${-bw}Z`,
+        fill:css("--z"+(zi+1))}, svg);
+      acc += pct;
+    });
+    const hit = el("rect", {x:PAD.l+band*i, y:PAD.t, width:band, height:plotH, fill:"transparent"}, svg);
+    hoverable(hit, monthLabel(r.month),
+      keys.map((k, zi) => [k, `${r.share[zi]}%  ·  ${fmtHM(r.minutes[zi])}`]).reverse()
+        .concat([["Sessions measured", r.sessions]]));
+  });
+  el("line", {x1:PAD.l, x2:W-PAD.r, y1:PAD.t+plotH, y2:PAD.t+plotH, stroke:css("--axis"), "stroke-width":1}, svg);
+
+  const every = Math.max(1, Math.ceil(rows.length / Math.max(3, Math.floor(plotW/68))));
+  xLabels(svg, rows
+    .map((r, i) => ({x: PAD.l + band*i + band/2, text: monthLabel(r.month), i}))
+    .filter(o => o.i % every === 0), H);
+}
+
+/* Calendar heatmap, sequential one-hue ramp. */
+function heatmap(host, days) {
+  const avail = host.clientWidth || 900;
+  const LEFT = 30, TOP = 20, GAP = 2;
+  const weeks = Math.ceil(days.length / 7);
+  // Cells never shrink below a usable tap size; if the year no longer fits, the
+  // strip scrolls sideways rather than being cropped at the card edge.
+  const cell = Math.max(9, Math.min(15, Math.floor((avail - LEFT - 6) / weeks) - GAP));
+  const step = cell + GAP;
+  const W = Math.max(avail, LEFT + weeks*step + 6);
+  const H = TOP + 7*step + 6;
+  host.innerHTML = "";
+  const scroller = document.createElement("div");
+  scroller.className = "hscroll";
+  host.appendChild(scroller);
+  const svg = svgIn(scroller, W, H);
+  svg.style.width = W + "px";
+  svg.style.maxWidth = "none";
+
+  const vals = days.filter(d => d.minutes > 0).map(d => d.minutes).sort((a,b) => a-b);
+  const q = p => vals.length ? vals[Math.min(vals.length-1, Math.floor(vals.length*p))] : 0;
+  const cuts = [q(.2), q(.4), q(.6), q(.8)];
+  const bucket = m => m <= 0 ? 0 : m <= cuts[0] ? 1 : m <= cuts[1] ? 2 : m <= cuts[2] ? 3 : m <= cuts[3] ? 4 : 5;
+
+  ["Mon","","Wed","","Fri","",""].forEach((lab, i) => {
+    if (!lab) return;
+    el("text", {x:LEFT-8, y:TOP + i*step + cell - 2, "text-anchor":"end", "font-size":10,
+      fill:css("--muted")}, svg).textContent = lab;
+  });
+
+  let lastMonth = -1;
+  days.forEach((d, idx) => {
+    const w = Math.floor(idx/7), dow = idx % 7;
+    const x = LEFT + w*step, y = TOP + dow*step;
+    if (d.future) return;
+    const date = parseD(d.date);
+    if (dow === 0 && date.getMonth() !== lastMonth && date.getDate() <= 7) {
+      lastMonth = date.getMonth();
+      el("text", {x, y:TOP-7, "font-size":10, fill:css("--muted")}, svg).textContent = MONTHS[lastMonth];
+    }
+    const b = bucket(d.minutes);
+    const r = el("rect", {x, y, width:cell, height:cell, rx:2.5,
+      fill: b === 0 ? css("--h0") : css("--h"+b)}, svg);
+    hoverable(r, longDate(d.date), d.sessions
+      ? [["Sessions", d.sessions], ["Mat time", fmtHM(d.minutes)]]
+      : [["", "Rest day"]]);
+  });
+
+  scroller.scrollLeft = scroller.scrollWidth;   // open on the most recent weeks
+  const legend = document.createElement("div");
+  legend.className = "scale";
+  legend.innerHTML = `<span>Less</span>` +
+    [0,1,2,3,4,5].map(b => `<span class="sw" style="background:var(--h${b})"></span>`).join("") +
+    `<span>More</span><span style="margin-left:10px">up to ${fmtHM(vals[vals.length-1] || 0)} in a day</span>`;
+  host.appendChild(legend);
+}
+
+/* Horizontal stacked bar — part to whole. */
+function stackedBarH(host, parts) {
+  if (!parts.length) { host.innerHTML = '<p class="empty">No activities in the last 12 months.</p>'; return; }
+  const W = host.clientWidth || 900, H = 46;
+  const svg = svgIn(host, W, H);
+  const total = parts.reduce((a, p) => a + p.hours, 0);
+  const colors = [css("--s1"), css("--s2"), css("--s3"), css("--s4"), css("--s5"), css("--de-emph")];
+  let x = 0;
+  parts.forEach((p, i) => {
+    const w = Math.max(2, (p.hours/total)*W - 2);           // 2px surface gap
+    const g = el("g", {}, svg);
+    el("rect", {x, y:0, width:w, height:16, rx:3, fill:colors[i % colors.length]}, g);
+    const pct = Math.round(100*p.hours/total);
+    const label = `${p.sport} ${pct}%`;
+    // Only label under the run when the text fits inside its own width.
+    if (w > label.length * 6.6 + 8) {
+      el("text", {x, y:34, "font-size":12, fill:css("--ink-2")}, g).textContent = label;
+    }
+    el("rect", {x, y:0, width:w, height:H, fill:"transparent"}, g);   // full-height hit target
+    hoverable(g, p.sport, [["Hours", fmtH(p.hours) + " h"], ["Share", pct + "%"]]);
+    x += w + 2;
+  });
+}
+
+/* ══ render ═════════════════════════════════════════════════════════ */
+const D = DATA;
+let rangeMonths = 12;
+
+function tile(label, value, unit, foot) {
+  return `<div class="card tile"><p class="label">${label}</p>
+    <p class="value">${value}${unit ? `<span class="unit">${unit}</span>` : ""}</p>
+    ${foot ? `<p class="foot">${foot}</p>` : ""}</div>`;
+}
+/* Status never rides on colour alone: every badge carries an icon and a word. */
+const ICONS = {
+  good: `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M5 8.4l2 2 4-4.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  warn: `<svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M8 4.4v4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="8" cy="11.4" r="1" fill="currentColor"/></svg>`,
+};
+function statusBadge(kind, text) {
+  return `<span class="badge"><span style="color:var(--${kind});display:flex">${ICONS[kind]}</span>${text}</span>`;
+}
+
+function renderStatic() {
+  document.title = `Mat time — ${D.meta.athlete || "BJJ"}`;
+  $("#subtitle").textContent =
+    `${D.meta.athlete ? D.meta.athlete + " · " : ""}Brazilian jiu-jitsu, synced from Garmin Connect`;
+  $("#stamp").textContent = D.meta.lastSync
+    ? "Synced " + D.meta.lastSync.replace("T", " ").replace("Z", " UTC") : "";
+  $("#wk-target").textContent = plural(D.meta.weeklyTarget, "session");
+  $("#mo-target").textContent = fmtH(D.meta.monthlyTarget) + "-hour";
+
+  if (D.meta.syncError) {
+    $("#alert-slot").innerHTML =
+      `<div class="alert"><b>Last sync failed.</b> ${esc(D.meta.syncError)} — the numbers below are
+       from the last good run. If this persists, re-run <code>scripts/login_local.py</code> to mint a
+       fresh token.</div>`;
+  }
+
+  const L = D.lifetime;
+  $("#hero-value").innerHTML = `${fmtH(L.hours)}<span class="unit">h</span>`;
+  $("#hero-since").textContent = L.firstSession
+    ? `${L.sessions.toLocaleString()} sessions since ${longDate(L.firstSession)} · ${L.years} years on the mats`
+    : "No sessions recorded yet";
+
+  $("#lifetime-tiles").innerHTML = [
+    tile("Sessions", L.sessions.toLocaleString(), "", `${Math.round(L.avgSessionMinutes)} min average`),
+    tile("Average week", L.avgPerWeek.toFixed(1), "", `best week: ${plural(L.mostInAWeek, "session")}`),
+    tile("Longest streak", D.streaks.longest, "wks", "consecutive weeks training"),
+    tile("Energy burned", Math.round(L.calories/1000).toLocaleString(), "k kcal", "across every session"),
+  ].join("");
+
+  // This week
+  const N = D.now, wkPct = Math.min(100, 100*N.weekSessions/D.meta.weeklyTarget);
+  const wkDone = N.weekSessions >= D.meta.weeklyTarget;
+  $("#week-card").innerHTML = `
+    <h3>This week</h3><p class="note">Week of ${longDate(N.weekStart)}</p>
+    <div class="meter-row">
+      <div class="meter-big">${N.weekSessions}<span class="unit">/ ${D.meta.weeklyTarget} sessions</span></div>
+      <div class="meter-goal">${fmtH(N.weekHours)} h on the mats</div>
+    </div>
+    <div class="track"><div class="fill" style="width:${wkPct}%"></div></div>
+    ${wkDone
+      ? statusBadge("good", `Target hit — ${plural(N.weekSessions, "session")} in`)
+      : statusBadge("warn", `${plural(D.meta.weeklyTarget - N.weekSessions, "session")} to go`)}
+    <span class="badge" style="margin-left:18px">${
+      D.streaks.targetStreak > 0 ? `${plural(D.streaks.targetStreak, "week")} at target in a row`
+      : D.streaks.targetWindow ? `${D.streaks.targetHitLast12} of the last ${D.streaks.targetWindow} weeks at target`
+      : "no completed weeks yet"}</span>`;
+
+  const monthPct = Math.min(100, 100*N.monthHours/D.meta.monthlyTarget);
+  const pacePct = Math.min(100, 100*N.monthPaceTarget/D.meta.monthlyTarget);
+  const onPace = N.monthHours >= N.monthPaceTarget;
+  $("#month-card").innerHTML = `
+    <h3>This month</h3><p class="note">Day ${N.dayOfMonth} of ${N.daysInMonth}</p>
+    <div class="meter-row">
+      <div class="meter-big">${fmtH(N.monthHours)}<span class="unit">/ ${fmtH(D.meta.monthlyTarget)} hours</span></div>
+      <div class="meter-goal">${plural(N.monthSessions, "session")}<br>on track for ${fmtH(N.monthProjected)} h</div>
+    </div>
+    <div class="track"><div class="fill" style="width:${monthPct}%"></div>
+      <div class="pace" style="left:calc(${pacePct}% - 1px)" title="pace to hit target"></div></div>
+    ${onPace
+      ? statusBadge("good", `Ahead of pace by ${fmtH(N.monthHours - N.monthPaceTarget)} h`)
+      : statusBadge("warn", `Behind pace by ${fmtH(N.monthPaceTarget - N.monthHours)} h`)}
+    <span class="badge" style="margin-left:18px">marker = where ${fmtH(D.meta.monthlyTarget)} h pace sits today</span>`;
+
+  const hrDelta = (N.avgHRRecent && N.avgHRBaseline) ? N.avgHRRecent - N.avgHRBaseline : null;
+  $("#now-tiles").innerHTML = [
+    tile("Last session", N.daysSinceLast === null ? "—"
+        : N.daysSinceLast === 0 ? "Today" : N.daysSinceLast === 1 ? "Yesterday" : `${N.daysSinceLast} days ago`,
+      "", N.lastSession ? `${esc(N.lastSession.name || "Session")} · ${fmtHM(N.lastSession.minutes)}` : ""),
+    tile("Training streak", D.streaks.current, "wks", "weeks in a row with mat time"),
+    tile("Session heart rate", N.avgHRRecent ? N.avgHRRecent : "—", N.avgHRRecent ? " bpm" : "",
+      hrDelta === null ? "last 20 sessions"
+        : `${hrDelta > 0 ? "+" : ""}${hrDelta} bpm vs your earlier average`),
+    tile("Last 12 weeks", D.streaks.targetWindow
+        ? `${D.streaks.targetHitLast12}/${D.streaks.targetWindow}` : "—", "",
+      `weeks at ${plural(D.meta.weeklyTarget, "session")} or more`),
+  ].join("");
+
+  $("#heat-note").textContent =
+    `Darker means more mat time. ${D.heatmap.filter(d => d.sessions).length} training days in the last year.`;
+  $("#sessions-note").textContent = D.sessions.length
+    ? `The ${Math.min(D.sessions.length, 400)} most recent BJJ sessions Garmin has recorded.`
+    : "Nothing here yet — your sessions appear after the first sync.";
+  $("#footer").innerHTML =
+    `Built ${esc(D.meta.generated)} from ${D.meta.totalActivities.toLocaleString()} Garmin activities.` +
+    (D.meta.zonesPending ? ` ${D.meta.zonesPending} sessions still queued for heart-rate zone detail.` : "");
+}
+
+function inRange(dateStr) {
+  if (!rangeMonths) return true;
+  const cut = new Date(); cut.setMonth(cut.getMonth() - rangeMonths);
+  return parseD(dateStr) >= cut;
+}
+
+function renderCharts() {
+  /* heatmap — always a full year, deliberately outside the range filter */
+  heatmap($("#heatmap"), D.heatmap);
+  table($("#heat-table"), "Training days, last 12 months", ["Date", "Sessions", "Mat time"],
+    D.heatmap.filter(d => d.sessions).reverse().map(d => [longDate(d.date), d.sessions, fmtHM(d.minutes)]));
+
+  /* sessions per week */
+  const weeks = D.weekly.filter(w => inRange(w.week));
+  columnChart($("#weeks-chart"), weeks.map((w, i) => ({
+    v: w.sessions, label: shortDate(w.week),
+    partial: i === weeks.length - 1 && w.week === D.now.weekStart,
+    title: "Week of " + longDate(w.week) +
+      (w.week === D.now.weekStart ? " · still in progress" : ""),
+    rows: [["Sessions", w.sessions], ["Mat time", fmtH(w.hours) + " h"],
+           ["vs target", (w.sessions - D.meta.weeklyTarget >= 0 ? "+" : "") + (w.sessions - D.meta.weeklyTarget)]],
+  })), {target: D.meta.weeklyTarget, targetLabel: `target ${D.meta.weeklyTarget}`});
+  table($("#weeks-table"), "Sessions per week", ["Week of", "Sessions", "Hours"],
+    [...weeks].reverse().map(w => [longDate(w.week), w.sessions, fmtH(w.hours)]));
+
+  /* mat hours per month */
+  const months = D.monthly.filter(m => inRange(m.month + "-01"));
+  const thisMonth = D.monthly.length ? D.monthly[D.monthly.length - 1].month : "";
+  columnChart($("#months-chart"), months.map(m => ({
+    v: m.hours, label: monthLabel(m.month),
+    partial: m.month === thisMonth,
+    title: monthLabel(m.month) + (m.month === thisMonth ? " · still in progress" : ""),
+    rows: [["Mat hours", fmtH(m.hours)], ["Sessions", m.sessions],
+           ["vs target", (m.hours - D.meta.monthlyTarget >= 0 ? "+" : "") + fmtH(m.hours - D.meta.monthlyTarget) + " h"]],
+  })), {target: D.meta.monthlyTarget, targetLabel: `target ${fmtH(D.meta.monthlyTarget)} h`,
+        tick: t => t + "h"});
+  table($("#months-table"), "Mat hours per month", ["Month", "Hours", "Sessions"],
+    [...months].reverse().map(m => [monthLabel(m.month), fmtH(m.hours), m.sessions]));
+
+  /* heart-rate zones */
+  const zones = D.zones.filter(z => inRange(z.month + "-01"));
+  const zoneNames = ["Zone 1 · warm-up", "Zone 2 · easy", "Zone 3 · aerobic", "Zone 4 · threshold", "Zone 5 · max"];
+  const zHost = $("#zones-chart");
+  zHost.innerHTML = "";
+  const zLegend = document.createElement("div");
+  zLegend.className = "legend";
+  zLegend.innerHTML = zoneNames.map((n, i) =>
+    `<span class="item"><span class="key" style="background:var(--z${i+1})"></span>${n.split(" · ")[0]}</span>`).join("");
+  zHost.appendChild(zLegend);
+  const zPlot = document.createElement("div");
+  zHost.appendChild(zPlot);
+  stackedColumns(zPlot, zones, zoneNames);
+  $("#zone-note").textContent = D.meta.zonesPending
+    ? `Share of session time per zone. ${D.meta.zonesPending} older sessions are still being backfilled.`
+    : "Share of session time in each heart-rate zone.";
+  table($("#zones-table"), "Heart-rate zone share by month",
+    ["Month", ...zoneNames.map(n => n.split(" · ")[0])],
+    [...zones].reverse().map(z => [monthLabel(z.month), ...z.share.map(s => s + "%")]));
+
+  /* average HR per session */
+  const hr = D.intensity.filter(p => inRange(p.date));
+  lineChart($("#hr-chart"), hr, [{key:"trend", label:"8-session average", color:css("--s1"), width:2}], {
+    dots: "avgHR", zeroBased: false,
+    xLabel: p => shortDate(p.date),
+    tick: t => Math.round(t),
+    endLabel: v => Math.round(v) + " bpm",
+    tipTitle: p => longDate(p.date),
+    tipRows: p => [["Session", p.name || "BJJ"], ["Average HR", p.avgHR + " bpm"],
+                   ["Rolling average", p.trend + " bpm"], ["Duration", fmtHM(p.minutes)]],
+  });
+  const hrHost = $("#hr-chart");
+  const hrLegend = document.createElement("div");
+  hrLegend.className = "legend";
+  hrLegend.style.marginTop = "12px";
+  hrLegend.innerHTML =
+    `<span class="item"><span class="key" style="background:var(--de-emph);border-radius:50%;width:9px;height:9px"></span>One session</span>
+     <span class="item"><span class="key line" style="background:var(--s1)"></span>8-session average</span>`;
+  hrHost.appendChild(hrLegend);
+  table($("#hr-table"), "Average heart rate per session", ["Date", "Session", "Avg HR", "Rolling avg"],
+    [...hr].reverse().slice(0, 200).map(p => [longDate(p.date), esc(p.name || "BJJ"), p.avgHR, p.trend]));
+
+  /* acute vs chronic load */
+  const load = D.load.filter(p => inRange(p.date));
+  const loadHost = $("#load-chart");
+  loadHost.innerHTML = "";
+  const lLegend = document.createElement("div");
+  lLegend.className = "legend";
+  lLegend.innerHTML =
+    `<span class="item"><span class="key line" style="background:var(--s1)"></span>Last 7 days</span>
+     <span class="item"><span class="key line" style="background:var(--de-emph)"></span>4-week average week</span>`;
+  loadHost.appendChild(lLegend);
+  const lPlot = document.createElement("div");
+  loadHost.appendChild(lPlot);
+  const loadHours = load.map(p => ({...p, acute: p.acute/60, chronic: p.chronic/60}));
+  lineChart(lPlot, loadHours, [
+    {key:"chronic", label:"4-week average", color:css("--de-emph"), width:2, marker:false},
+    {key:"acute", label:"Last 7 days", color:css("--s1"), width:2},
+  ], {
+    zeroBased: true,
+    xLabel: p => shortDate(p.date),
+    tick: t => t + "h",
+    tipTitle: p => longDate(p.date),
+    tipRows: p => [["Last 7 days", fmtHM(p.acute*60)], ["4-week average week", fmtHM(p.chronic*60)],
+                   ["Ratio", p.chronic > 0 ? (p.acute/p.chronic).toFixed(2) + "×" : "—"]],
+  });
+  table($("#load-table"), "Rolling mat minutes", ["Date", "Last 7 days", "4-week average"],
+    [...load].reverse().slice(0, 200).map(p => [longDate(p.date), Math.round(p.acute), Math.round(p.chronic)]));
+
+  /* VO2 max */
+  const vo2 = D.vo2max.filter(p => inRange(p.date));
+  if (vo2.length >= 2) {
+    lineChart($("#vo2-chart"), vo2, [{key:"value", color:css("--s1"), width:2}], {
+      xLabel: p => shortDate(p.date),
+      endLabel: v => v.toFixed(1),
+      tick: t => t,
+      tipTitle: p => longDate(p.date),
+      tipRows: p => [["VO2 max", p.value]],
+    });
+    $("#vo2-note").textContent =
+      `Weekly samples from your watch. Now ${vo2[vo2.length-1].value}, ` +
+      `${(vo2[vo2.length-1].value - vo2[0].value >= 0 ? "up " : "down ")}` +
+      `${Math.abs(vo2[vo2.length-1].value - vo2[0].value).toFixed(1)} over this range.`;
+  } else {
+    $("#vo2-chart").innerHTML = '<p class="empty">VO<sub>2</sub> max history is still being backfilled — ' +
+      'a few more samples arrive with every daily sync.</p>';
+  }
+  table($("#vo2-table"), "VO2 max samples", ["Date", "VO2 max"],
+    [...vo2].reverse().map(p => [longDate(p.date), p.value]));
+
+  /* sport mix */
+  const mixHost = $("#mix-chart");
+  mixHost.innerHTML = "";
+  const mixColors = ["--s1","--s2","--s3","--s4","--s5","--de-emph"];
+  const mixLegend = document.createElement("div");
+  mixLegend.className = "legend";
+  mixLegend.innerHTML = D.sportMix.map((p, i) =>
+    `<span class="item"><span class="key" style="background:var(${mixColors[i % mixColors.length]})"></span>${esc(p.sport)}</span>`).join("");
+  mixHost.appendChild(mixLegend);
+  const mixPlot = document.createElement("div");
+  mixHost.appendChild(mixPlot);
+  stackedBarH(mixPlot, D.sportMix);
+  const mixTotal = D.sportMix.reduce((a, p) => a + p.hours, 0) || 1;
+  table($("#mix-table"), "Hours by sport, last 12 months", ["Sport", "Hours", "Share"],
+    D.sportMix.map(p => [p.sport, fmtH(p.hours), Math.round(100*p.hours/mixTotal) + "%"]));
+
+  /* recent sessions */
+  const rows = [...D.sessions].reverse().map(s => [
+    longDate(s.date), esc(s.name || "BJJ"), fmtHM(s.minutes),
+    s.avgHR ?? "—", s.maxHR ?? "—", s.aerobicTE ?? "—", s.load != null ? Math.round(s.load) : "—",
+  ]);
+  $("#sessions-table").innerHTML = `<table>
+    <thead><tr>${["Date","Session","Duration","Avg HR","Max HR","Aerobic TE","Load"]
+      .map(c => `<th>${c}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+}
+
+/* ══ controls ═══════════════════════════════════════════════════════ */
+$("#theme-btn").addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  $("#theme-btn").textContent = next === "dark" ? "Light" : "Dark";
+  renderCharts();
+});
+$("#tables-btn").addEventListener("click", () => {
+  const on = document.body.classList.toggle("show-tables");
+  $("#tables-btn").setAttribute("aria-pressed", on);
+});
+document.querySelectorAll(".range").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".range").forEach(o => o.setAttribute("aria-pressed", "false"));
+    b.setAttribute("aria-pressed", "true");
+    rangeMonths = +b.dataset.months;
+    renderCharts();
+  });
+});
+let resizeTimer;
+addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderCharts, 140);
+});
+
+renderStatic();
+renderCharts();
+</script>
+</body>
+</html>

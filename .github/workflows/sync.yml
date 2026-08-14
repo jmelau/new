@@ -1,0 +1,72 @@
+name: Sync Garmin and publish dashboard
+
+on:
+  schedule:
+    # 03:15 UTC — 05:15 in Oslo through the summer, 04:15 in winter. Either way it
+    # runs after every evening class has finished uploading.
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Re-scan the entire Garmin history"
+        type: boolean
+        default: false
+
+# One run at a time: two overlapping runs would fight over the rotating token.
+concurrency:
+  group: garmin-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Pull from Garmin Connect
+        id: sync
+        continue-on-error: true
+        env:
+          GARMIN_TOKENS: ${{ secrets.GARMIN_TOKENS }}
+          TOKEN_KEY: ${{ secrets.TOKEN_KEY }}
+        run: python scripts/sync.py ${{ inputs.full && '--full' || '' }}
+
+      # Always rebuild: if the sync failed, the dashboard still redraws from the
+      # last good data and shows the error banner instead of going stale silently.
+      - name: Build the dashboard
+        if: always()
+        run: python scripts/build.py
+
+      - name: Commit data and dashboard
+        if: always()
+        run: |
+          git config user.name "garmin-sync"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data docs
+          if git diff --staged --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Sync $(date -u '+%Y-%m-%d')"
+            git pull --rebase --autostash
+            git push
+          fi
+
+      # Surface a failed sync as a red run so GitHub emails you about it.
+      - name: Report sync failure
+        if: steps.sync.outcome == 'failure'
+        run: |
+          echo "::error::Garmin sync failed — see the 'Pull from Garmin Connect' step."
+          exit 1

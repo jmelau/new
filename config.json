@@ -1,0 +1,21 @@
+{
+  "athlete_name": "Jørgen",
+  "timezone": "Europe/Oslo",
+
+  "_comment_bjj": "How a session is recognised as BJJ. An activity counts if its Garmin typeKey is in bjj_type_keys, OR its name matches one of bjj_name_patterns (case-insensitive substring). Adjust after the first sync once you see the real type keys in data/activity_types.json.",
+  "bjj_type_keys": ["mixed_martial_arts"],
+  "bjj_name_patterns": ["bjj", "jiu", "jitsu", "grappl", "no-gi", "nogi", "open mat"],
+
+  "_comment_targets": "Goals the dashboard measures you against.",
+  "weekly_session_target": 3,
+  "monthly_hours_target": 20,
+
+  "_comment_hygiene": "Sessions shorter than this are ignored (accidental starts, forgotten stops are capped).",
+  "min_session_minutes": 15,
+  "max_session_minutes": 240,
+
+  "_comment_budgets": "Per-run request budgets, to stay well under Garmin rate limits. Backfill catches up over several daily runs.",
+  "hr_zone_enrich_budget": 30,
+  "vo2max_backfill_budget": 25,
+  "request_delay_seconds": 0.8
+}

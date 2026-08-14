@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+# Never commit a plaintext token. Only data/garmin_token.enc belongs in git.
+garmin_tokens.json
+*.token.json
+.env
+
+# Installer archive, if it ends up in here
+*.zip
+
+# GitHub CLI, if the installer had to fetch it locally
+.tools/
