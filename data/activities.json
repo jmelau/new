@@ -33115,5 +33115,30 @@
   "startTimeLocal": "2026-08-22 11:14:13",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 4
+ },
+ {
+  "activityId": 24089044515,
+  "activityName": "Larvik Mountain Biking",
+  "activityTrainingLoad": 5.653778076171875,
+  "aerobicTrainingEffect": 0.5,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 102.0,
+  "calories": 239.0,
+  "distance": 11416.669921875,
+  "duration": 2639.31298828125,
+  "elapsedDuration": 2639.31298828125,
+  "hrTimeInZone_1": 2201.783,
+  "hrTimeInZone_2": 253.03,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 122.0,
+  "moderateIntensityMinutes": 35,
+  "movingDuration": 2606.0,
+  "parentTypeId": 2,
+  "startTimeGMT": "2026-08-23 17:17:29",
+  "startTimeLocal": "2026-08-23 19:17:29",
+  "typeKey": "mountain_biking",
+  "vigorousIntensityMinutes": 0
  }
 ]
