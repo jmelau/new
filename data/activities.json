@@ -33438,5 +33438,30 @@
   "startTimeLocal": "2026-09-01 13:43:03",
   "typeKey": "running",
   "vigorousIntensityMinutes": 32
+ },
+ {
+  "activityId": 24207123419,
+  "activityName": "Larvik Running",
+  "activityTrainingLoad": 23.57550048828125,
+  "aerobicTrainingEffect": 2.0,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 119.0,
+  "calories": 483.0,
+  "distance": 741.5,
+  "duration": 2589.698974609375,
+  "elapsedDuration": 2589.698974609375,
+  "hrTimeInZone_1": 1607.711,
+  "hrTimeInZone_2": 0.0,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 140.0,
+  "moderateIntensityMinutes": 8,
+  "movingDuration": 1631.0,
+  "parentTypeId": 17,
+  "startTimeGMT": "2026-09-02 08:10:09",
+  "startTimeLocal": "2026-09-02 10:10:09",
+  "typeKey": "running",
+  "vigorousIntensityMinutes": 33
  }
 ]
