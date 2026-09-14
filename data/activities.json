@@ -33613,5 +33613,30 @@
   "startTimeLocal": "2026-09-11 17:01:40",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 36
+ },
+ {
+  "activityId": 24347128127,
+  "activityName": "Larvik Cycling",
+  "activityTrainingLoad": 19.109207153320312,
+  "aerobicTrainingEffect": 2.0999999046325684,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 105.0,
+  "calories": 646.0,
+  "distance": 27069.3203125,
+  "duration": 5619.43115234375,
+  "elapsedDuration": 6371.4189453125,
+  "hrTimeInZone_1": 4004.894,
+  "hrTimeInZone_2": 632.94,
+  "hrTimeInZone_3": 38.003,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 131.0,
+  "moderateIntensityMinutes": 68,
+  "movingDuration": 5601.8819580078125,
+  "parentTypeId": 17,
+  "startTimeGMT": "2026-09-13 12:30:43",
+  "startTimeLocal": "2026-09-13 14:30:43",
+  "typeKey": "cycling",
+  "vigorousIntensityMinutes": 9
  }
 ]
