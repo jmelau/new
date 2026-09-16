@@ -33706,10 +33706,12 @@
   "hrTimeInZone_4": 100.214,
   "hrTimeInZone_5": 576.227,
   "maxHR": 196.0,
+  "moderateIntensityMinutes": 15,
   "movingDuration": 324.0,
   "parentTypeId": 17,
   "startTimeGMT": "2026-09-15 06:40:26",
   "startTimeLocal": "2026-09-15 08:40:26",
-  "typeKey": "running"
+  "typeKey": "running",
+  "vigorousIntensityMinutes": 18
  }
 ]
