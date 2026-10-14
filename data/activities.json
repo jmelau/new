@@ -34259,5 +34259,30 @@
   "startTimeLocal": "2026-10-12 17:57:50",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 30
+ },
+ {
+  "activityId": 24711456118,
+  "activityName": "Indoor Cycling",
+  "activityTrainingLoad": 20.86639404296875,
+  "aerobicTrainingEffect": 2.0999999046325684,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 105.0,
+  "calories": 354.0,
+  "distance": 0.0,
+  "duration": 2993.197021484375,
+  "elapsedDuration": 2993.197021484375,
+  "hrTimeInZone_1": 2427.994,
+  "hrTimeInZone_2": 77.993,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 119.0,
+  "moderateIntensityMinutes": 34,
+  "movingDuration": 0.0,
+  "parentTypeId": 2,
+  "startTimeGMT": "2026-10-13 16:00:31",
+  "startTimeLocal": "2026-10-13 18:00:31",
+  "typeKey": "indoor_cycling",
+  "vigorousIntensityMinutes": 4
  }
 ]
