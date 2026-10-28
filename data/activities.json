@@ -34484,5 +34484,28 @@
   "startTimeLocal": "2026-10-26 17:48:34",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 19
+ },
+ {
+  "activityId": 24878801355,
+  "activityName": "Oslo Running",
+  "activityTrainingLoad": 30.582183837890625,
+  "aerobicTrainingEffect": 2.0,
+  "anaerobicTrainingEffect": 0.699999988079071,
+  "averageHR": 133.0,
+  "calories": 143.0,
+  "distance": 1296.7900390625,
+  "duration": 650.844970703125,
+  "elapsedDuration": 650.844970703125,
+  "hrTimeInZone_1": 36.693,
+  "hrTimeInZone_2": 564.16,
+  "hrTimeInZone_3": 40.996,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 143.0,
+  "movingDuration": 650.844970703125,
+  "parentTypeId": 17,
+  "startTimeGMT": "2026-10-28 09:12:55",
+  "startTimeLocal": "2026-10-28 10:12:55",
+  "typeKey": "running"
  }
 ]
