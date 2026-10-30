@@ -34552,10 +34552,12 @@
   "hrTimeInZone_4": 0.0,
   "hrTimeInZone_5": 0.0,
   "maxHR": 118.0,
+  "moderateIntensityMinutes": 46,
   "movingDuration": 3988.34912109375,
   "parentTypeId": 29,
   "startTimeGMT": "2026-10-29 08:44:06",
   "startTimeLocal": "2026-10-29 09:44:06",
-  "typeKey": "strength_training"
+  "typeKey": "strength_training",
+  "vigorousIntensityMinutes": 0
  }
 ]
