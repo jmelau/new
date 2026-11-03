@@ -34584,5 +34584,30 @@
   "startTimeLocal": "2026-10-30 16:54:25",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 33
+ },
+ {
+  "activityId": 24941966536,
+  "activityName": "Sundsvall Running",
+  "activityTrainingLoad": 12.5662841796875,
+  "aerobicTrainingEffect": 1.2000000476837158,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 111.0,
+  "calories": 215.0,
+  "distance": 2279.280029296875,
+  "duration": 1412.071044921875,
+  "elapsedDuration": 1412.071044921875,
+  "hrTimeInZone_1": 1037.992,
+  "hrTimeInZone_2": 0.0,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 126.0,
+  "moderateIntensityMinutes": 15,
+  "movingDuration": 1360.0,
+  "parentTypeId": 17,
+  "startTimeGMT": "2026-11-02 17:04:36",
+  "startTimeLocal": "2026-11-02 18:04:36",
+  "typeKey": "running",
+  "vigorousIntensityMinutes": 7
  }
 ]
