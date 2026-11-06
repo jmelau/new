@@ -34609,5 +34609,30 @@
   "startTimeLocal": "2026-11-02 18:04:36",
   "typeKey": "running",
   "vigorousIntensityMinutes": 7
+ },
+ {
+  "activityId": 24973933452,
+  "activityName": "Strength",
+  "activityTrainingLoad": 5.2201690673828125,
+  "aerobicTrainingEffect": 0.20000000298023224,
+  "anaerobicTrainingEffect": 0.20000000298023224,
+  "averageHR": 77.0,
+  "calories": 245.0,
+  "distance": 0.0,
+  "duration": 3607.721923828125,
+  "elapsedDuration": 3607.721923828125,
+  "hrTimeInZone_1": 36.999,
+  "hrTimeInZone_2": 9.999,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 121.0,
+  "moderateIntensityMinutes": 11,
+  "movingDuration": 3607.721923828125,
+  "parentTypeId": 29,
+  "startTimeGMT": "2026-11-05 10:21:07",
+  "startTimeLocal": "2026-11-05 11:21:07",
+  "typeKey": "strength_training",
+  "vigorousIntensityMinutes": 0
  }
 ]
