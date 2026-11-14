@@ -12,11 +12,15 @@
   --page:#0d0d0d; --surface:#1a1a19; --raised:#212120;
   --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781;
   --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
-  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  /* Series order is the colourblind-safety mechanism, not decoration: teal,
+     orange, violet, yellow, magenta is one of only three orderings that clears
+     every adjacent-pair gate in BOTH modes. Don't reorder without re-running
+     the validator. */
+  --s1:#15a0a0; --s2:#d95926; --s3:#9085e9; --s4:#c98500; --s5:#d55181;
   --de-emph:#5a5a56;
-  --track:#0d366b;
-  --z1:#b7d3f6; --z2:#6da7ec; --z3:#3987e5; --z4:#256abf; --z5:#184f95;
-  --h0:#272726; --h1:#184f95; --h2:#256abf; --h3:#3987e5; --h4:#6da7ec; --h5:#9ec5f4;
+  --track:#024040;
+  --z1:#a4dddc; --z2:#1cbaba; --z3:#079a9a; --z4:#027b7b; --z5:#065d5d;
+  --h0:#272726; --h1:#065d5d; --h2:#027b7b; --h3:#079a9a; --h4:#1cbaba; --h5:#82d2d1;
   --good:#0ca30c; --warn:#fab219; --crit:#d03b3b;
 }
 :root[data-theme="light"]{
@@ -24,11 +28,14 @@
   --page:#f9f9f7; --surface:#fcfcfb; --raised:#ffffff;
   --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
   --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
-  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  /* Light mode is stepped for the light surface, not flipped from dark. Teal
+     runs out of chroma as it darkens, so the light accent sits lighter than
+     the dark one — that is the gamut, not an oversight. */
+  --s1:#00abab; --s2:#eb6834; --s3:#4a3aa7; --s4:#eda100; --s5:#e87ba4;
   --de-emph:#b8b6ae;
-  --track:#cde2fb;
-  --z1:#86b6ef; --z2:#5598e7; --z3:#2a78d6; --z4:#1c5cab; --z5:#0d366b;
-  --h0:#eeede8; --h1:#cde2fb; --h2:#9ec5f4; --h3:#5598e7; --h4:#2a78d6; --h5:#184f95;
+  --track:#c1e9e8;
+  --z1:#1cbaba; --z2:#079a9a; --z3:#027b7b; --z4:#065d5d; --z5:#024040;
+  --h0:#eeede8; --h1:#c1e9e8; --h2:#82d2d1; --h3:#1cbaba; --h4:#0a8a8a; --h5:#065d5d;
   --good:#006300; --warn:#fab219; --crit:#d03b3b;
 }
 
@@ -40,12 +47,12 @@ body{
   font-size:15px; line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:1180px;margin:0 auto;padding:0 28px 96px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px 72px}
 
 /* ── header ─────────────────────────────────────────────────────────── */
 header.top{
-  display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;
-  padding:44px 0 26px;border-bottom:1px solid var(--border);margin-bottom:44px;
+  display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;
+  padding:26px 0 16px;border-bottom:1px solid var(--border);margin-bottom:26px;
 }
 header.top h1{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:0}
 header.top .sub{margin:4px 0 0;color:var(--muted);font-size:13px}
@@ -59,50 +66,54 @@ button.ghost[aria-pressed="true"]{background:var(--raised);color:var(--ink);bord
 .stamp{color:var(--muted);font-size:12px;margin-left:6px}
 
 /* ── layout ─────────────────────────────────────────────────────────── */
-section{margin:0 0 52px}
+section{margin:0 0 30px}
 h2.band{
-  font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 18px;
+  font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 12px;
 }
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media (max-width:860px){.grid-2,.grid-4{grid-template-columns:1fr}}
 @media (max-width:640px){.wrap{padding:0 16px 72px}}
 
 .card{
-  background:var(--surface);border:1px solid var(--border);border-radius:14px;
-  padding:22px 24px 20px;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:15px 17px 13px;
 }
-.card h3{font-size:14px;font-weight:600;margin:0 0 2px}
-.card .note{font-size:12.5px;color:var(--muted);margin:0 0 18px}
+.card h3{font-size:13.5px;font-weight:600;margin:0 0 2px}
+.card .note{font-size:12px;color:var(--muted);margin:0 0 11px}
 
 /* ── hero ───────────────────────────────────────────────────────────── */
-.hero{display:flex;flex-wrap:wrap;align-items:flex-end;gap:44px;margin-bottom:26px}
+/* Hero and the lifetime tiles share one row: the single biggest saving of
+   vertical space on the page. */
+.topband{display:grid;grid-template-columns:minmax(230px,0.9fr) 3fr;gap:14px;align-items:stretch}
+@media (max-width:980px){.topband{grid-template-columns:1fr}}
+.hero{display:flex;flex-direction:column;justify-content:center}
 .hero .label{
-  font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
-  margin:0 0 6px;font-weight:600;
+  font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);
+  margin:0 0 4px;font-weight:600;
 }
 .hero .value{
-  font-size:78px;line-height:.94;font-weight:600;letter-spacing:-.03em;margin:0;
+  font-size:52px;line-height:.95;font-weight:600;letter-spacing:-.03em;margin:0;
 }
-.hero .value .unit{font-size:30px;font-weight:500;color:var(--ink-2);margin-left:4px;letter-spacing:0}
-.hero .since{margin:10px 0 0;color:var(--ink-2);font-size:13.5px}
+.hero .value .unit{font-size:21px;font-weight:500;color:var(--ink-2);margin-left:3px;letter-spacing:0}
+.hero .since{margin:7px 0 0;color:var(--ink-2);font-size:12.5px;line-height:1.35}
 
-.tile .label{font-size:12.5px;color:var(--muted);margin:0 0 6px}
-.tile .value{font-size:31px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.1}
-.tile .value .unit{font-size:15px;font-weight:500;color:var(--ink-2);margin-left:2px}
-.tile .foot{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+.tile .label{font-size:11.5px;color:var(--muted);margin:0 0 4px}
+.tile .value{font-size:25px;font-weight:600;letter-spacing:-.02em;margin:0;line-height:1.1}
+.tile .value .unit{font-size:13px;font-weight:500;color:var(--ink-2);margin-left:2px}
+.tile .foot{font-size:11.5px;color:var(--muted);margin:4px 0 0}
 
 /* ── meters ─────────────────────────────────────────────────────────── */
-.meter-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:12px}
-.meter-big{font-size:40px;font-weight:600;letter-spacing:-.02em;line-height:1}
-.meter-big .unit{font-size:16px;font-weight:500;color:var(--ink-2);margin-left:2px}
+.meter-row{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-bottom:9px}
+.meter-big{font-size:31px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.meter-big .unit{font-size:14px;font-weight:500;color:var(--ink-2);margin-left:2px}
 .meter-goal{font-size:12.5px;color:var(--muted);text-align:right}
-.track{height:10px;border-radius:999px;background:var(--track);overflow:hidden;position:relative}
+.track{height:8px;border-radius:999px;background:var(--track);overflow:hidden;position:relative}
 .fill{height:100%;border-radius:999px;background:var(--s1)}
 .pace{position:absolute;top:-4px;width:2px;height:18px;background:var(--ink-2);border-radius:1px}
 .badge{
-  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;margin-top:14px;
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;margin-top:10px;
   color:var(--ink-2);
 }
 .badge .dot{width:9px;height:9px;border-radius:50%}
@@ -110,12 +121,36 @@ h2.band{
 
 /* ── charts ─────────────────────────────────────────────────────────── */
 .plot{width:100%;display:block}
-.legend{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 14px;font-size:12.5px;color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 9px;font-size:12px;color:var(--ink-2)}
 .legend .item{display:inline-flex;align-items:center;gap:7px}
 .legend .key{width:11px;height:11px;border-radius:3px;flex:none}
 .legend .key.line{height:3px;border-radius:2px;width:14px}
-.scale{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-top:14px;flex-wrap:wrap}
+.scale{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted);margin-top:9px;flex-wrap:wrap}
 .hscroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.rhythm-wrap{display:grid;grid-template-columns:1fr 1.15fr;gap:26px;align-items:start}
+@media (max-width:860px){.rhythm-wrap{grid-template-columns:1fr;gap:18px}}
+.rrow{display:grid;grid-template-columns:30px 1fr 38px;gap:10px;align-items:center;
+      margin-bottom:6px;font-size:12.5px}
+.rrow .rd{color:var(--ink-2)}
+.rrow .rbar{background:var(--grid);border-radius:2px;height:10px;overflow:hidden}
+.rrow .rbar i{display:block;height:100%;border-radius:0 5px 5px 0;background:var(--de-emph)}
+.rrow.on .rd{color:var(--ink)}
+.rrow.on .rbar i{background:var(--s1)}
+.rrow .rp{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.blanks-head{font-size:12.5px;color:var(--ink);margin:0 0 9px}
+.brow{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline;
+      font-size:12.5px;padding:5px 0;border-top:1px solid var(--border)}
+.brow .bd{color:var(--ink);font-variant-numeric:tabular-nums}
+.brow .bn{color:var(--muted)}
+.blanks-none{font-size:12.5px;color:var(--muted)}
+td .sus{color:var(--muted)}
+.tnote{font-size:11.5px;color:var(--muted);margin:9px 0 0}
+.mixfigs{margin-top:14px;display:flex;flex-direction:column;gap:7px}
+.mixfig{display:grid;grid-template-columns:11px 1fr auto auto;gap:9px;align-items:center;font-size:12.5px}
+.mixfig .key{width:11px;height:11px;border-radius:3px}
+.mixfig .n{color:var(--ink)}
+.mixfig .v{color:var(--ink-2);font-variant-numeric:tabular-nums}
+.mixfig .p{color:var(--muted);font-variant-numeric:tabular-nums;min-width:34px;text-align:right}
 .scale .sw{width:13px;height:13px;border-radius:3px}
 text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 
@@ -139,14 +174,14 @@ th:first-child,td:first-child{text-align:left}
 td{padding:8px 0;border-bottom:1px solid var(--border);color:var(--ink-2);text-align:right}
 td:first-child{color:var(--ink)}
 tbody tr:last-child td{border-bottom:none}
-.tablewrap{max-height:340px;overflow:auto;margin-top:18px}
+.tablewrap{max-height:300px;overflow:auto;margin-top:12px}
 .data-table{display:none;margin-top:20px;border-top:1px solid var(--border);padding-top:16px}
 body.show-tables .data-table{display:block}
 .data-table h4{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase}
 
 .filterbar{
-  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-  padding:0 0 22px;margin:0 0 4px;
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  padding:0 0 14px;margin:0;
 }
 .filterbar .lbl{font-size:12.5px;color:var(--muted);margin-right:2px}
 .empty{color:var(--muted);font-size:13px;padding:22px 0}
@@ -155,7 +190,7 @@ body.show-tables .data-table{display:block}
   padding:14px 18px;margin:0 0 30px;font-size:13.5px;color:var(--ink-2);
 }
 .alert b{color:var(--ink)}
-footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:22px}
+footer{color:var(--muted);font-size:11.5px;border-top:1px solid var(--border);padding-top:16px}
 </style>
 </head>
 <body>
@@ -174,17 +209,17 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padd
 
   <div id="alert-slot"></div>
 
-  <!-- ── lifetime ─────────────────────────────────────────────────── -->
+  <!-- ── all time ─────────────────────────────────────────────────── -->
   <section>
     <h2 class="band">All time</h2>
-    <div class="hero">
-      <div>
+    <div class="topband">
+      <div class="card hero">
         <p class="label">Lifetime mat time</p>
         <p class="value" id="hero-value">—</p>
         <p class="since" id="hero-since"></p>
       </div>
+      <div class="grid-4" id="lifetime-tiles"></div>
     </div>
-    <div class="grid-4" id="lifetime-tiles"></div>
   </section>
 
   <!-- ── right now ────────────────────────────────────────────────── -->
@@ -194,17 +229,27 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padd
       <div class="card" id="week-card"></div>
       <div class="card" id="month-card"></div>
     </div>
-    <div class="grid-4" style="margin-top:20px" id="now-tiles"></div>
+    <div class="grid-4" style="margin-top:14px" id="now-tiles"></div>
   </section>
 
   <!-- ── consistency ──────────────────────────────────────────────── -->
   <section>
     <h2 class="band">Consistency</h2>
-    <div class="card" style="margin-bottom:20px">
+    <div class="card" style="margin-bottom:14px">
       <h3>Every training day, last 12 months</h3>
       <p class="note" id="heat-note"></p>
       <div id="heatmap"></div>
       <div class="data-table" id="heat-table"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <h3>Your usual week</h3>
+      <p class="note" id="rhythm-note"></p>
+      <div class="rhythm-wrap">
+        <div id="rhythm-bars"></div>
+        <div id="rhythm-blanks"></div>
+      </div>
+      <div class="data-table" id="rhythm-table"></div>
     </div>
 
     <div class="filterbar">
@@ -261,17 +306,11 @@ footer{color:var(--muted);font-size:12px;border-top:1px solid var(--border);padd
         <div class="data-table" id="load-table"></div>
       </div>
       <div class="card">
-        <h3>VO<sub>2</sub> max</h3>
-        <p class="note" id="vo2-note">Weekly samples from your watch.</p>
-        <div id="vo2-chart"></div>
-        <div class="data-table" id="vo2-table"></div>
+        <h3>How the training year splits</h3>
+        <p class="note">Hours by sport, last 12 months.</p>
+        <div id="mix-chart"></div>
+        <div class="data-table" id="mix-table"></div>
       </div>
-    </div>
-    <div class="card" style="margin-top:20px">
-      <h3>How the training year splits</h3>
-      <p class="note">Hours by sport, last 12 months.</p>
-      <div id="mix-chart"></div>
-      <div class="data-table" id="mix-table"></div>
     </div>
   </section>
 
@@ -404,8 +443,8 @@ function xLabels(svg, items, H, minGap = 12) {
 
 function columnChart(host, rows, opt) {
   const W = host.clientWidth || 520;
-  const PAD = {t:20, r:14, b:30, l:38};
-  const H = 210;
+  const PAD = {t:18, r:14, b:28, l:38};
+  const H = 178;
   const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
   const svg = svgIn(host, W, H);
   if (!rows.length) { host.innerHTML = '<p class="empty">No sessions in this range yet.</p>'; return; }
@@ -455,7 +494,7 @@ function columnChart(host, rows, opt) {
 function lineChart(host, points, series, opt = {}) {
   const W = host.clientWidth || 520;
   const PAD = {t:16, r:opt.endLabel ? 68 : 16, b:30, l:40};
-  const H = opt.height || 210;
+  const H = opt.height || 178;
   const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
   const svg = svgIn(host, W, H);
   if (points.length < 2) { host.innerHTML = '<p class="empty">Not enough data yet.</p>'; return; }
@@ -528,8 +567,8 @@ function lineChart(host, points, series, opt = {}) {
 /* Stacked columns, ordinal ramp, 2px surface gap between segments. */
 function stackedColumns(host, rows, keys) {
   const W = host.clientWidth || 520;
-  const PAD = {t:14, r:14, b:30, l:38};
-  const H = 210;
+  const PAD = {t:14, r:14, b:28, l:38};
+  const H = 178;
   const plotW = W - PAD.l - PAD.r, plotH = H - PAD.t - PAD.b;
   const svg = svgIn(host, W, H);
   if (!rows.length) { host.innerHTML = '<p class="empty">Heart-rate zones are still syncing.</p>'; return; }
@@ -631,7 +670,9 @@ function heatmap(host, days) {
 /* Horizontal stacked bar — part to whole. */
 function stackedBarH(host, parts) {
   if (!parts.length) { host.innerHTML = '<p class="empty">No activities in the last 12 months.</p>'; return; }
-  const W = host.clientWidth || 900, H = 46;
+  // No labels on the bar itself: the figures list underneath names every sport
+  // with its hours, so repeating them here would just be noise.
+  const W = host.clientWidth || 900, H = 18;
   const svg = svgIn(host, W, H);
   const total = parts.reduce((a, p) => a + p.hours, 0);
   const colors = [css("--s1"), css("--s2"), css("--s3"), css("--s4"), css("--s5"), css("--de-emph")];
@@ -641,11 +682,6 @@ function stackedBarH(host, parts) {
     const g = el("g", {}, svg);
     el("rect", {x, y:0, width:w, height:16, rx:3, fill:colors[i % colors.length]}, g);
     const pct = Math.round(100*p.hours/total);
-    const label = `${p.sport} ${pct}%`;
-    // Only label under the run when the text fits inside its own width.
-    if (w > label.length * 6.6 + 8) {
-      el("text", {x, y:34, "font-size":12, fill:css("--ink-2")}, g).textContent = label;
-    }
     el("rect", {x, y:0, width:w, height:H, fill:"transparent"}, g);   // full-height hit target
     hoverable(g, p.sport, [["Hours", fmtH(p.hours) + " h"], ["Share", pct + "%"]]);
     x += w + 2;
@@ -679,8 +715,12 @@ function renderStatic() {
   document.title = `Mat time — ${D.meta.athlete || "BJJ"}`;
   $("#subtitle").textContent =
     `${D.meta.athlete ? D.meta.athlete + " · " : ""}Brazilian jiu-jitsu, synced from Garmin Connect`;
-  $("#stamp").textContent = D.meta.lastSync
-    ? "Synced " + D.meta.lastSync.replace("T", " ").replace("Z", " UTC") : "";
+  if (D.meta.lastSync) {
+    const t = new Date(D.meta.lastSync);
+    $("#stamp").textContent = isNaN(t) ? "Synced " + D.meta.lastSync
+      : "Synced " + t.toLocaleString(undefined,
+          {day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"});
+  }
   $("#wk-target").textContent = plural(D.meta.weeklyTarget, "session");
   $("#mo-target").textContent = fmtH(D.meta.monthlyTarget) + "-hour";
 
@@ -753,13 +793,14 @@ function renderStatic() {
   ].join("");
 
   $("#heat-note").textContent =
-    `Darker means more mat time. ${D.heatmap.filter(d => d.sessions).length} training days in the last year.`;
+    `The stronger the colour, the more mat time. ` +
+    `${D.heatmap.filter(d => d.sessions).length} training days in the last year.`;
   $("#sessions-note").textContent = D.sessions.length
     ? `The ${Math.min(D.sessions.length, 400)} most recent BJJ sessions Garmin has recorded.`
     : "Nothing here yet — your sessions appear after the first sync.";
   $("#footer").innerHTML =
     `Built ${esc(D.meta.generated)} from ${D.meta.totalActivities.toLocaleString()} Garmin activities.` +
-    (D.meta.zonesPending ? ` ${D.meta.zonesPending} sessions still queued for heart-rate zone detail.` : "");
+    (D.meta.zonesPending ? ` ${D.meta.zonesPending} sessions have no heart-rate zone detail.` : "");
 }
 
 function inRange(dateStr) {
@@ -773,6 +814,50 @@ function renderCharts() {
   heatmap($("#heatmap"), D.heatmap);
   table($("#heat-table"), "Training days, last 12 months", ["Date", "Sessions", "Mat time"],
     D.heatmap.filter(d => d.sessions).reverse().map(d => [longDate(d.date), d.sessions, fmtHM(d.minutes)]));
+
+  /* your usual week */
+  const R = D.rhythm;
+  $("#rhythm-note").textContent =
+    `How often you train each day, across the last ${R.windowWeeks} weeks. ` +
+    `Highlighted days are the ones that count as your routine.`;
+
+  const barsHost = $("#rhythm-bars");
+  barsHost.innerHTML = R.days.map(d => `
+    <div class="rrow${d.regular ? " on" : ""}" data-day="${d.day}">
+      <span class="rd">${d.short}</span>
+      <span class="rbar"><i style="width:${Math.max(d.rate, 1)}%"></i></span>
+      <span class="rp">${d.rate}%</span>
+    </div>`).join("");
+  R.days.forEach(d => {
+    const row = barsHost.querySelector(`[data-day="${d.day}"]`);
+    if (row) hoverable(row, d.name,
+      [["Trained", `${d.weeks} of ${R.windowWeeks} weeks`],
+       ["Part of your routine", d.regular ? "yes" : "no"]]);
+  });
+
+  const blanksHost = $("#rhythm-blanks");
+  if (!R.regularCount) {
+    blanksHost.innerHTML = '<p class="blanks-none">No day is regular enough yet to ' +
+      'call a session missing. This fills in as the history grows.</p>';
+  } else if (!R.blanks.length) {
+    blanksHost.innerHTML = `<p class="blanks-head">Nothing missing</p>
+      <p class="blanks-none">Every one of your usual days in the last
+      ${R.lookbackWeeks} weeks has a session against it.</p>`;
+  } else {
+    blanksHost.innerHTML =
+      `<p class="blanks-head">${R.blankCount === 1 ? "One usual day" :
+        R.blankCount + " usual days"} with nothing recorded, last ${R.lookbackWeeks} weeks</p>` +
+      R.blanks.map(b => `<div class="brow">
+          <span class="bd">${longDate(b.date)}</span>
+          <span class="bn">${b.name}s in ${b.rate}% of weeks</span>
+        </div>`).join("") +
+      `<p class="tnote">Either you skipped, or the watch never captured it —
+       worth a look in Garmin Connect if one surprises you.</p>`;
+  }
+  table($("#rhythm-table"), `Weekday attendance, last ${R.windowWeeks} weeks`,
+    ["Day", "Weeks trained", "Rate", "Routine"],
+    R.days.map(d => [d.name, `${d.weeks}/${R.windowWeeks}`, d.rate + "%",
+                     d.regular ? "yes" : "—"]));
 
   /* sessions per week */
   const weeks = D.weekly.filter(w => inRange(w.week));
@@ -814,9 +899,13 @@ function renderCharts() {
   const zPlot = document.createElement("div");
   zHost.appendChild(zPlot);
   stackedColumns(zPlot, zones, zoneNames);
-  $("#zone-note").textContent = D.meta.zonesPending
-    ? `Share of session time per zone. ${D.meta.zonesPending} older sessions are still being backfilled.`
-    : "Share of session time in each heart-rate zone.";
+  const M = D.meta;
+  const zoneBits = [`Built from ${M.hrOk} sessions.`];
+  if (M.hrSuspect) zoneBits.push(
+    `${M.hrSuspect} excluded where the trace looks like sensor dropout.`);
+  if (M.hrNone) zoneBits.push(`${M.hrNone} have no heart rate at all.`);
+  zoneBits.push("Wrist heart rate under-reads during grappling, so read these as a floor.");
+  $("#zone-note").textContent = zoneBits.join(" ");
   table($("#zones-table"), "Heart-rate zone share by month",
     ["Month", ...zoneNames.map(n => n.split(" · ")[0])],
     [...zones].reverse().map(z => [monthLabel(z.month), ...z.share.map(s => s + "%")]));
@@ -870,52 +959,43 @@ function renderCharts() {
   table($("#load-table"), "Rolling mat minutes", ["Date", "Last 7 days", "4-week average"],
     [...load].reverse().slice(0, 200).map(p => [longDate(p.date), Math.round(p.acute), Math.round(p.chronic)]));
 
-  /* VO2 max */
-  const vo2 = D.vo2max.filter(p => inRange(p.date));
-  if (vo2.length >= 2) {
-    lineChart($("#vo2-chart"), vo2, [{key:"value", color:css("--s1"), width:2}], {
-      xLabel: p => shortDate(p.date),
-      endLabel: v => v.toFixed(1),
-      tick: t => t,
-      tipTitle: p => longDate(p.date),
-      tipRows: p => [["VO2 max", p.value]],
-    });
-    $("#vo2-note").textContent =
-      `Weekly samples from your watch. Now ${vo2[vo2.length-1].value}, ` +
-      `${(vo2[vo2.length-1].value - vo2[0].value >= 0 ? "up " : "down ")}` +
-      `${Math.abs(vo2[vo2.length-1].value - vo2[0].value).toFixed(1)} over this range.`;
-  } else {
-    $("#vo2-chart").innerHTML = '<p class="empty">VO<sub>2</sub> max history is still being backfilled — ' +
-      'a few more samples arrive with every daily sync.</p>';
-  }
-  table($("#vo2-table"), "VO2 max samples", ["Date", "VO2 max"],
-    [...vo2].reverse().map(p => [longDate(p.date), p.value]));
-
   /* sport mix */
   const mixHost = $("#mix-chart");
   mixHost.innerHTML = "";
   const mixColors = ["--s1","--s2","--s3","--s4","--s5","--de-emph"];
-  const mixLegend = document.createElement("div");
-  mixLegend.className = "legend";
-  mixLegend.innerHTML = D.sportMix.map((p, i) =>
-    `<span class="item"><span class="key" style="background:var(${mixColors[i % mixColors.length]})"></span>${esc(p.sport)}</span>`).join("");
-  mixHost.appendChild(mixLegend);
   const mixPlot = document.createElement("div");
   mixHost.appendChild(mixPlot);
   stackedBarH(mixPlot, D.sportMix);
   const mixTotal = D.sportMix.reduce((a, p) => a + p.hours, 0) || 1;
+  // Doubles as the legend: swatch plus name, so identity never rides on colour
+  // alone — and it puts the hours in the space the bar leaves empty.
+  const mixFigs = document.createElement("div");
+  mixFigs.className = "mixfigs";
+  mixFigs.innerHTML = D.sportMix.map((p, i) => `<div class="mixfig">
+      <span class="key" style="background:var(${mixColors[i % mixColors.length]})"></span>
+      <span class="n">${esc(p.sport)}</span>
+      <span class="v">${fmtH(p.hours)} h</span>
+      <span class="p">${Math.round(100 * p.hours / mixTotal)}%</span>
+    </div>`).join("");
+  mixHost.appendChild(mixFigs);
   table($("#mix-table"), "Hours by sport, last 12 months", ["Sport", "Hours", "Share"],
     D.sportMix.map(p => [p.sport, fmtH(p.hours), Math.round(100*p.hours/mixTotal) + "%"]));
 
   /* recent sessions */
+  const sus = s => s.hrQuality === "suspect";
   const rows = [...D.sessions].reverse().map(s => [
     longDate(s.date), esc(s.name || "BJJ"), fmtHM(s.minutes),
-    s.avgHR ?? "—", s.maxHR ?? "—", s.aerobicTE ?? "—", s.load != null ? Math.round(s.load) : "—",
+    s.avgHR == null ? "—" : sus(s) ? `<span class="sus">${s.avgHR}*</span>` : s.avgHR,
+    s.maxHR == null ? "—" : sus(s) ? `<span class="sus">${s.maxHR}</span>` : s.maxHR,
+    s.aerobicTE ?? "—", s.load != null ? Math.round(s.load) : "—",
   ]);
+  const anySus = D.sessions.some(sus);
   $("#sessions-table").innerHTML = `<table>
     <thead><tr>${["Date","Session","Duration","Avg HR","Max HR","Aerobic TE","Load"]
       .map(c => `<th>${c}</th>`).join("")}</tr></thead>
-    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+    <tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`
+    + (anySus ? `<p class="tnote">* the watch lost the heart-rate signal on these,
+       so they are left out of the zone and intensity figures.</p>` : "");
 }
 
 /* ══ controls ═══════════════════════════════════════════════════════ */

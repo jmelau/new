@@ -15,7 +15,7 @@
   "max_session_minutes": 240,
 
   "_comment_budgets": "Per-run request budgets, to stay well under Garmin rate limits. Backfill catches up over several daily runs.",
-  "hr_zone_enrich_budget": 30,
-  "vo2max_backfill_budget": 25,
+  "hr_zone_enrich_budget": 10,
+  "vo2max_backfill_budget": 8,
   "request_delay_seconds": 0.8
 }

@@ -21,6 +21,19 @@ OUTPUT = REPO_ROOT / "docs" / "index.html"
 
 HEATMAP_DAYS = 371  # 53 whole weeks
 
+# Optical wrist heart rate fails badly in grappling — gripping, wrist flexion and
+# sleeve pressure break the signal. These rules catch a trace that is clearly the
+# sensor giving up rather than an easy session, so those readings can be kept out
+# of the zone and intensity figures instead of quietly dragging them down.
+HR_SUSPECT_MAX_BPM = 125   # an hour on the mats never topping this is not real
+HR_SUSPECT_SPREAD = 15     # avg and max nearly equal means a stuck trace
+HR_CHECK_OVER_MIN = 30     # too short to judge below this
+
+# A weekday counts as part of your routine if you train it this often.
+RHYTHM_WEEKS = 26
+RHYTHM_REGULAR_RATE = 0.45
+BLANK_LOOKBACK_WEEKS = 6
+
 
 # ─────────────────────────────────────────────────────────── helpers ──
 
@@ -54,6 +67,22 @@ def parse_local(value: str | None) -> datetime | None:
         return datetime.fromisoformat(value.replace("Z", ""))
     except ValueError:
         return None
+
+
+def hr_quality(avg, mx, minutes: float) -> str:
+    """ok | suspect | none — is this session's heart-rate trace believable?"""
+    if not avg or not mx:
+        return "none"
+    if minutes <= HR_CHECK_OVER_MIN:
+        return "ok"
+    if float(mx) < HR_SUSPECT_MAX_BPM or (float(mx) - float(avg)) < HR_SUSPECT_SPREAD:
+        return "suspect"
+    return "ok"
+
+
+def r1(value):
+    """Round a Garmin float32 to one decimal, passing None through."""
+    return None if value is None else round(float(value), 1)
 
 
 def is_bjj(activity: dict, cfg: dict) -> bool:
@@ -112,10 +141,14 @@ def build_sessions(activities: list[dict], cfg: dict) -> tuple[list[dict], list[
             "maxHR": a.get("maxHR"),
             "calories": a.get("calories"),
             "load": a.get("activityTrainingLoad"),
-            "aerobicTE": a.get("aerobicTrainingEffect"),
-            "anaerobicTE": a.get("anaerobicTrainingEffect"),
+            # Garmin returns these as float32, so 2.4 arrives as 2.4000000953674316.
+            "aerobicTE": r1(a.get("aerobicTrainingEffect")),
+            "anaerobicTE": r1(a.get("anaerobicTrainingEffect")),
             "zones": [round(z, 1) for z in zones] if sum(zones) > 0 else None,
         }
+        record["hrQuality"] = hr_quality(
+            record["avgHR"], record["maxHR"], record["minutes"]
+        )
         if is_bjj(a, cfg):
             if raw_minutes < lo:
                 continue  # too short to be a real class
@@ -243,7 +276,7 @@ def zones_by_month(sessions: list[dict]) -> list[dict]:
     buckets: dict[str, list[float]] = defaultdict(lambda: [0.0] * 5)
     covered: dict[str, int] = defaultdict(int)
     for s in sessions:
-        if not s["zones"]:
+        if not s["zones"] or s.get("hrQuality") == "suspect":
             continue
         key = s["date"][:7]
         for i, secs in enumerate(s["zones"]):
@@ -308,6 +341,65 @@ def streaks(weekly: list[dict], target: int) -> dict:
     }
 
 
+def weekday_rhythm(sessions: list[dict]) -> dict:
+    """How your week actually looks, and which of those days came up empty.
+
+    Returns the per-weekday attendance rate over a trailing window, which days
+    that makes routine, and the recent routine days with nothing recorded. A
+    blank is not proof you skipped training — it is equally a session the watch
+    never captured, which is the point: it gives you something to check.
+    """
+    names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+             "Saturday", "Sunday"]
+    today = date.today()
+    this_monday = monday(today)
+    trained = {date.fromisoformat(s["date"]) for s in sessions}
+
+    # Only completed weeks count toward the rate, so the current part-week
+    # cannot drag a regular day below the threshold.
+    window_start = this_monday - timedelta(days=7 * RHYTHM_WEEKS)
+    weeks_seen: dict[int, set] = defaultdict(set)
+    for d in trained:
+        if window_start <= d < this_monday:
+            weeks_seen[d.weekday()].add(monday(d))
+
+    days = []
+    for i in range(7):
+        rate = len(weeks_seen[i]) / RHYTHM_WEEKS
+        days.append({
+            "day": i,
+            "name": names[i],
+            "short": names[i][:3],
+            "weeks": len(weeks_seen[i]),
+            "rate": round(100 * rate),
+            "regular": rate >= RHYTHM_REGULAR_RATE,
+        })
+
+    regular = [d["day"] for d in days if d["regular"]]
+    blanks = []
+    for back in range(BLANK_LOOKBACK_WEEKS, -1, -1):
+        wk = this_monday - timedelta(days=7 * back)
+        for i in regular:
+            d = wk + timedelta(days=i)
+            if d > today or d < window_start:
+                continue
+            if d not in trained:
+                blanks.append({
+                    "date": d.isoformat(),
+                    "name": names[i],
+                    "rate": next(x["rate"] for x in days if x["day"] == i),
+                })
+
+    return {
+        "days": days,
+        "regularCount": len(regular),
+        "windowWeeks": RHYTHM_WEEKS,
+        "lookbackWeeks": BLANK_LOOKBACK_WEEKS,
+        "blanks": blanks[-8:],
+        "blankCount": len(blanks),
+    }
+
+
 def sport_mix(bjj: list[dict], other: list[dict], days: int = 365) -> list[dict]:
     cutoff = (date.today() - timedelta(days=days)).isoformat()
     totals: dict[str, float] = defaultdict(float)
@@ -334,7 +426,7 @@ def intensity_points(sessions: list[dict]) -> list[dict]:
     pts = [
         {"date": s["date"], "avgHR": s["avgHR"], "minutes": s["minutes"], "name": s["name"]}
         for s in sessions
-        if s.get("avgHR")
+        if s.get("avgHR") and s.get("hrQuality") == "ok"
     ]
     # 8-session trailing mean, so the trend line is readable through the scatter.
     window: list[float] = []
@@ -385,8 +477,9 @@ def main() -> int:
     if first_date:
         span_weeks = max(1.0, (today - date.fromisoformat(first_date)).days / 7.0)
 
-    recent_hr = [s["avgHR"] for s in bjj[-20:] if s.get("avgHR")]
-    baseline_hr = [s["avgHR"] for s in bjj[-120:-20] if s.get("avgHR")]
+    usable = [s for s in bjj if s["hrQuality"] == "ok"]
+    recent_hr = [s["avgHR"] for s in usable[-20:]]
+    baseline_hr = [s["avgHR"] for s in usable[-120:-20]]
 
     last = bjj[-1] if bjj else None
     days_since = (today - date.fromisoformat(last["date"])).days if last else None
@@ -401,6 +494,9 @@ def main() -> int:
             "monthlyTarget": month_target,
             "totalActivities": len(activities),
             "zonesPending": sum(1 for s in bjj if not s["zones"]),
+            "hrOk": sum(1 for s in bjj if s["hrQuality"] == "ok"),
+            "hrSuspect": sum(1 for s in bjj if s["hrQuality"] == "suspect"),
+            "hrNone": sum(1 for s in bjj if s["hrQuality"] == "none"),
         },
         "lifetime": {
             "hours": round(total_minutes / 60.0, 1),
@@ -428,6 +524,7 @@ def main() -> int:
             "avgHRBaseline": round(statistics.fmean(baseline_hr)) if baseline_hr else None,
         },
         "streaks": streaks(weekly, int(cfg["weekly_session_target"])),
+        "rhythm": weekday_rhythm(bjj),
         "weekly": weekly,
         "monthly": monthly,
         "heatmap": heatmap_series(bjj),

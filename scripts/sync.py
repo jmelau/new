@@ -125,7 +125,7 @@ def enrich_hr_zones(client, activities: dict, bjj_ids: list, budget: int, delay:
         return 0
     # Newest first: recent sessions matter most on the dashboard.
     pending.sort(key=lambda a: activities[a].get("startTimeLocal", ""), reverse=True)
-    done = failed = 0
+    done = failed = skipped = 0
     for aid in pending[:budget]:
         try:
             zones = client.get_activity_hr_in_timezones(str(aid))
@@ -141,15 +141,25 @@ def enrich_hr_zones(client, activities: dict, bjj_ids: list, budget: int, delay:
                 # data (no HR recorded) — don't ask again.
                 activities[aid]["zonesUnavailable"] = True
         except Exception as exc:  # noqa: BLE001 - one bad activity must not kill the run
-            # An error might just be rate limiting, so leave it queued for tomorrow.
-            print(f"  ! zones for {aid}: {exc}")
-            failed += 1
-            if failed >= 5:
-                print("  ! giving up on zone enrichment for this run")
-                break
+            status = getattr(getattr(exc, "response", None), "status_code", None)
+            text = str(exc).lower()
+            # A 404 means this activity has no zone data and never will — flag it,
+            # or it is retried every single day and starves the newer ones. Only
+            # transient failures (429, 5xx, network) stay queued.
+            permanent = status in (400, 403, 404) or "404" in text or "not found" in text
+            if permanent:
+                activities[aid]["zonesUnavailable"] = True
+                skipped += 1
+            else:
+                print(f"  ! zones for {aid}: {exc}")
+                failed += 1
+                if failed >= 5:
+                    print("  ! giving up on zone enrichment for this run")
+                    break
         time.sleep(delay)
     remaining = max(0, len(pending) - budget)
-    print(f"  heart-rate zones: +{done} enriched, {remaining} still queued")
+    print(f"  heart-rate zones: +{done} enriched, {skipped} have none available, "
+          f"{remaining} still queued")
     return done
 
 

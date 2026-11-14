@@ -4,7 +4,7 @@ on:
   schedule:
     # 03:15 UTC — 05:15 in Oslo through the summer, 04:15 in winter. Either way it
     # runs after every evening class has finished uploading.
-    - cron: "15 3 * * *"
+    - cron: "37 */6 * * *"
   workflow_dispatch:
     inputs:
       full:
@@ -59,7 +59,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Nothing changed."
           else
-            git commit -m "Sync $(date -u '+%Y-%m-%d')"
+            git commit -m "Sync $(date -u '+%Y-%m-%d %H:%M') UTC"
             git pull --rebase --autostash
             git push
           fi
