@@ -2,8 +2,8 @@ name: Sync Garmin and publish dashboard
 
 on:
   schedule:
-    # 03:15 UTC — 05:15 in Oslo through the summer, 04:15 in winter. Either way it
-    # runs after every evening class has finished uploading.
+    # Four times a day: GitHub delayed the old 03:15 schedule by 5h39m-8h15m, so
+    # more attempts beats a cleverer time. The 18:37 run lands overnight in Oslo.
     - cron: "37 */6 * * *"
   workflow_dispatch:
     inputs:
