@@ -34809,5 +34809,28 @@
   "startTimeLocal": "2026-11-14 10:01:30",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 29
+ },
+ {
+  "activityId": 25085127678,
+  "activityName": "Larvik Running",
+  "activityTrainingLoad": 39.94822692871094,
+  "aerobicTrainingEffect": 2.5999999046325684,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 122.0,
+  "calories": 605.0,
+  "distance": 6407.08984375,
+  "duration": 3663.48193359375,
+  "elapsedDuration": 3663.48193359375,
+  "hrTimeInZone_1": 3319.997,
+  "hrTimeInZone_2": 238.999,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 132.0,
+  "movingDuration": 3599.0,
+  "parentTypeId": 17,
+  "startTimeGMT": "2026-11-15 09:47:59",
+  "startTimeLocal": "2026-11-15 10:47:59",
+  "typeKey": "running"
  }
 ]
