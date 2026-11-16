@@ -34827,10 +34827,35 @@
   "hrTimeInZone_4": 0.0,
   "hrTimeInZone_5": 0.0,
   "maxHR": 132.0,
+  "moderateIntensityMinutes": 24,
   "movingDuration": 3599.0,
   "parentTypeId": 17,
   "startTimeGMT": "2026-11-15 09:47:59",
   "startTimeLocal": "2026-11-15 10:47:59",
-  "typeKey": "running"
+  "typeKey": "running",
+  "vigorousIntensityMinutes": 36
+ },
+ {
+  "activityId": 25102160639,
+  "activityName": "Brazilian Jiu Jitsu",
+  "activityTrainingLoad": 95.01902770996094,
+  "aerobicTrainingEffect": 3.5,
+  "anaerobicTrainingEffect": 0.6000000238418579,
+  "averageHR": 114.0,
+  "calories": 981.0,
+  "distance": 0.0,
+  "duration": 7046.44384765625,
+  "elapsedDuration": 7046.44384765625,
+  "hrTimeInZone_1": 2159.201,
+  "hrTimeInZone_2": 669.23,
+  "hrTimeInZone_3": 1222.222,
+  "hrTimeInZone_4": 738.727,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 153.0,
+  "movingDuration": 0.0,
+  "parentTypeId": 4,
+  "startTimeGMT": "2026-11-16 16:51:33",
+  "startTimeLocal": "2026-11-16 17:51:33",
+  "typeKey": "mixed_martial_arts"
  }
 ]
