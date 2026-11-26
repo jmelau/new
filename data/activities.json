@@ -34934,5 +34934,30 @@
   "startTimeLocal": "2026-11-20 16:52:46",
   "typeKey": "mixed_martial_arts",
   "vigorousIntensityMinutes": 10
+ },
+ {
+  "activityId": 25208042660,
+  "activityName": "Strength",
+  "activityTrainingLoad": 3.7774200439453125,
+  "aerobicTrainingEffect": 0.4000000059604645,
+  "anaerobicTrainingEffect": 0.0,
+  "averageHR": 85.0,
+  "calories": 246.0,
+  "distance": 0.0,
+  "duration": 2992.27587890625,
+  "elapsedDuration": 2992.27587890625,
+  "hrTimeInZone_1": 447.007,
+  "hrTimeInZone_2": 0.0,
+  "hrTimeInZone_3": 0.0,
+  "hrTimeInZone_4": 0.0,
+  "hrTimeInZone_5": 0.0,
+  "maxHR": 111.0,
+  "moderateIntensityMinutes": 16,
+  "movingDuration": 2992.27587890625,
+  "parentTypeId": 29,
+  "startTimeGMT": "2026-11-26 16:36:06",
+  "startTimeLocal": "2026-11-26 17:36:06",
+  "typeKey": "strength_training",
+  "vigorousIntensityMinutes": 0
  }
 ]
