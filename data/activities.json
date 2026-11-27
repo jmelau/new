@@ -34952,7 +34952,7 @@
   "hrTimeInZone_4": 0.0,
   "hrTimeInZone_5": 0.0,
   "maxHR": 111.0,
-  "moderateIntensityMinutes": 16,
+  "moderateIntensityMinutes": 24,
   "movingDuration": 2992.27587890625,
   "parentTypeId": 29,
   "startTimeGMT": "2026-11-26 16:36:06",
